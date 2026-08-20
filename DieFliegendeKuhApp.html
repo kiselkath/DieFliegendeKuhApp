@@ -398,18 +398,18 @@
       <div class="rwarn hide" id="rWarnL"></div>
     </div>
     <div class="card">
-      <div class="cardtitle"><span data-i18n="learnFilterTitle">📊 Статус в диапазоне</span></div>
+      <div class="cardtitle"><span data-i18n="learnFilterTitle">🗂️ Что повторяем?</span></div>
       <div class="folders" id="learnStatusFilter">
-        <div class="folder new"><div class="n" id="cNewL">0</div><div class="l" data-i18n="lblNew">Новые</div></div>
-        <div class="folder notlearned"><div class="n" id="cNotL">0</div><div class="l" data-i18n="lblNotLearned">Невыучено</div></div>
-        <div class="folder repeated"><div class="n" id="cRepeatedL">0</div><div class="l" data-i18n="lblRepeated">Повторено</div></div>
-        <div class="folder learned"><div class="n" id="cLearnedL">0</div><div class="l" data-i18n="lblLearned">Выучено</div></div>
+        <div class="folder pick active new" data-status="new" role="button" tabindex="0"><div class="n" id="cNewL">0</div><div class="l" data-i18n="lblNew">Новые</div></div>
+        <div class="folder pick active notlearned" data-status="notlearned" role="button" tabindex="0"><div class="n" id="cNotL">0</div><div class="l" data-i18n="lblNotLearned">Невыучено</div></div>
+        <div class="folder pick active repeated" data-status="repeated" role="button" tabindex="0"><div class="n" id="cRepeatedL">0</div><div class="l" data-i18n="lblRepeated">Повторено</div></div>
+        <div class="folder pick active learned" data-status="learned" role="button" tabindex="0"><div class="n" id="cLearnedL">0</div><div class="l" data-i18n="lblLearned">Выучено</div></div>
       </div>
       <div class="divider"></div>
       <div class="row">
         <button class="primary" id="learnStartBtn" data-i18n="learnStartBtn">▶ Начать</button>
       </div>
-      <div class="foot" data-i18n="learnSetupFoot">В повторение попадают все глаголы диапазона, независимо от статуса.</div>
+      <div class="foot" data-i18n="learnSetupFoot">По умолчанию — все статусы. Нажмите на папку, чтобы включить/исключить её из повторения.</div>
     </div>
   </div>
 
@@ -484,24 +484,20 @@ document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme)
 
 /* ---------- СВЕТЛАЯ / ТЁМНАЯ СХЕМА ---------- */
 const SCHEME_KEY = "deutsch_verben_1_270_scheme";
-let scheme = null; // null = следовать системной настройке, "light"/"dark" = ручной выбор
-try{ scheme = localStorage.getItem(SCHEME_KEY); }catch(e){}
-if(scheme!=="light" && scheme!=="dark") scheme = null;
-const schemeMedia = window.matchMedia ? window.matchMedia("(prefers-color-scheme: light)") : null;
-function effectiveScheme(){ return scheme || (schemeMedia && schemeMedia.matches ? "light" : "dark"); }
+let scheme = "light"; // светлая схема нового дизайна — стиль по умолчанию, независимо от системной темы
+try{ scheme = localStorage.getItem(SCHEME_KEY) || "light"; }catch(e){}
+if(scheme!=="light" && scheme!=="dark") scheme = "light";
 function applyScheme(){
-  const eff = effectiveScheme();
-  document.documentElement.setAttribute("data-scheme", eff);
+  document.documentElement.setAttribute("data-scheme", scheme);
   const btn = document.getElementById("schemeToggleBtn");
-  if(btn) btn.textContent = eff==="light" ? "☀️" : "🌙";
+  if(btn) btn.textContent = scheme==="light" ? "☀️" : "🌙";
 }
 function toggleScheme(){
-  scheme = effectiveScheme()==="light" ? "dark" : "light";
+  scheme = scheme==="light" ? "dark" : "light";
   try{ localStorage.setItem(SCHEME_KEY, scheme); }catch(e){}
   applyScheme();
 }
 applyScheme();
-if(schemeMedia){ const onSchemeChange=()=>{ if(!scheme) applyScheme(); }; schemeMedia.addEventListener ? schemeMedia.addEventListener("change", onSchemeChange) : schemeMedia.addListener(onSchemeChange); }
 document.getElementById("schemeToggleBtn").addEventListener("click", toggleScheme);
 
 /* ---------- I18N ---------- */
@@ -566,9 +562,9 @@ const I18N = {
     dictAllForms:"все формы для повторения", dictEmpty:"Ничего не найдено.",
     actLearned:"Выучено", actNotLearned:"Невыучено", actNew:"Новое", actRepeated:"Повторено",
     verbWord:(n)=>{ const f=["глагол","глагола","глаголов"]; const a=n%10,b=n%100; if(a===1&&b!==11)return f[0]; if(a>=2&&a<=4&&(b<10||b>=20))return f[1]; return f[2]; },
-    learnFilterTitle:"📊 Статус в диапазоне", learnStartBtn:"▶ Начать",
+    learnFilterTitle:"🗂️ Что повторяем?", learnStartBtn:"▶ Начать",
     learnFinishBtn:"Завершить", learnCheckBtn:"Перейти к тренажёру",
-    learnSetupFoot:"В повторение попадают все глаголы диапазона, независимо от статуса.",
+    learnSetupFoot:"По умолчанию — все статусы. Нажмите на папку, чтобы включить/исключить её из повторения.",
     learnTapHint:"Тап по карточке — рассмотреть · вправо — «повторено» · влево — «невыучено»",
     learnCompleteTitle:"Повтор завершён", learnCompleteTestBtn:"🧪 Перейти к тренировке",
   },
@@ -628,9 +624,9 @@ const I18N = {
     dictAllForms:"all forms for review", dictEmpty:"Nothing found.",
     actLearned:"Learned", actNotLearned:"Not learned", actNew:"New", actRepeated:"Repeated",
     verbWord:(n)=> n===1 ? "verb" : "verbs",
-    learnFilterTitle:"📊 Status in this range", learnStartBtn:"▶ Start",
+    learnFilterTitle:"🗂️ What to review?", learnStartBtn:"▶ Start",
     learnFinishBtn:"Finish", learnCheckBtn:"Go to trainer",
-    learnSetupFoot:"All verbs in the range are included, regardless of status.",
+    learnSetupFoot:"All statuses are selected by default. Tap a folder to include/exclude it from the review.",
     learnTapHint:"Tap the card to reveal more · right — “repeated” · left — “not learned”",
     learnCompleteTitle:"Repeat session finished", learnCompleteTestBtn:"🧪 Go to training",
   },
@@ -690,9 +686,9 @@ const I18N = {
     dictAllForms:"tutte le forme per il ripasso", dictEmpty:"Nessun risultato.",
     actLearned:"Imparato", actNotLearned:"Non imparato", actNew:"Nuovo", actRepeated:"Ripassato",
     verbWord:(n)=> n===1 ? "verbo" : "verbi",
-    learnFilterTitle:"📊 Stato nell'intervallo", learnStartBtn:"▶ Inizia",
+    learnFilterTitle:"🗂️ Cosa ripassiamo?", learnStartBtn:"▶ Inizia",
     learnFinishBtn:"Termina", learnCheckBtn:"Vai all'esercitatore",
-    learnSetupFoot:"Nel ripasso rientrano tutti i verbi dell'intervallo, indipendentemente dallo stato.",
+    learnSetupFoot:"Di default sono selezionati tutti gli stati. Tocca una cartella per includerla/escluderla dal ripasso.",
     learnTapHint:"Tocca la carta per vedere di più · destra — «ripassato» · sinistra — «non imparato»",
     learnCompleteTitle:"Ripasso completato", learnCompleteTestBtn:"🧪 Vai all'allenamento",
   }
@@ -936,8 +932,12 @@ function learnCounts(){ let l=0,n=0,nw=0,r=0; VERBS.filter(learnInRange).forEach
 function refreshLearnFolders(){ const c=learnCounts();
   document.getElementById("cLearnedL").textContent=c.learned; document.getElementById("cNotL").textContent=c.notlearned;
   document.getElementById("cRepeatedL").textContent=c.repeated; document.getElementById("cNewL").textContent=c["new"]; }
-/* Повторение всегда стартует со всех глаголов диапазона, независимо от статуса — набор сокращается по ходу сессии. */
-function buildLearnQueue(){ return VERBS.filter(learnInRange); }
+function learnStatusesChecked(){
+  const st={}; document.querySelectorAll("#learnStatusFilter .folder").forEach(el=>{ st[el.dataset.status]=el.classList.contains("active"); });
+  return st;
+}
+/* По умолчанию отмечены все статусы — набор дальше сокращается по ходу сессии (свайп вправо убирает карточку). */
+function buildLearnQueue(){ const st=learnStatusesChecked(); return VERBS.filter(learnInRange).filter(v=>st[status[v.id]]); }
 function renderLearnPresets(){
   const box=document.getElementById("presetsL"); box.innerHTML="";
   PRESETS.forEach(([a,b])=>{ const btn=document.createElement("button"); btn.textContent=a+"–"+b; btn.dataset.a=a; btn.dataset.b=b;
@@ -962,6 +962,8 @@ function learnGoToTest(){
 }
 function startLearnDeck(){
   if(!learnRangeValid()){ alert(t("alertNoRange")); return; }
+  const st=learnStatusesChecked();
+  if(!st["new"]&&!st.notlearned&&!st.repeated&&!st.learned){ alert(t("alertChooseStatus")); return; }
   const pool=buildLearnQueue();
   if(pool.length===0){ alert(t("alertEmptyPool")); return; }
   learnDeck={pool}; cardState=0; show("learnDeck"); renderLearnCard();
@@ -1101,6 +1103,10 @@ document.querySelectorAll('#langToggle button').forEach(b=>b.addEventListener("c
 document.getElementById("rFromL").addEventListener("input",onLearnRangeChange);
 document.getElementById("rToL").addEventListener("input",onLearnRangeChange);
 document.getElementById("learnStartBtn").addEventListener("click",startLearnDeck);
+document.querySelectorAll("#learnStatusFilter .folder").forEach(el=>{
+  el.addEventListener("click",()=>el.classList.toggle("active"));
+  el.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); el.classList.toggle("active"); } });
+});
 document.getElementById("learnFinishBtn").addEventListener("click",()=>{ learnDeck=null; show("learnSetup"); });
 document.getElementById("learnCheckBtn").addEventListener("click",learnGoToTest);
 document.getElementById("learnCompleteTestBtn").addEventListener("click",learnGoToTest);
