@@ -89,7 +89,7 @@
   header.top{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
   h1{font-size:19px; margin:0; font-weight:700; letter-spacing:.2px}
   h1 small{display:block; font-weight:500; color:var(--muted); font-size:12.5px; margin-top:2px}
-  .toggles{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .toggles{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
   .langtoggle{display:flex; gap:4px; flex:0 0 auto}
   .langtoggle button{padding:6px 10px; font-size:12px; font-weight:700; border-radius:10px}
   .langtoggle button.sel{background:var(--accent); color:var(--aink); border-color:transparent}
@@ -130,6 +130,7 @@
   .folder.pick.active{border-width:3px}
   .folder.pick.active .l{font-weight:800}
   .folder.pick:focus-visible{outline:2px solid var(--accent2); outline-offset:2px}
+  #resultScreen .folder .n{font-size:17px; white-space:normal; word-break:break-word}
   label.opt{display:flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; cursor:pointer; background:var(--panel2)}
   label.opt input{accent-color:var(--accent2)}
   .modes{display:flex; flex-direction:column; gap:8px; margin:6px 0 12px}
@@ -397,18 +398,18 @@
       <div class="rwarn hide" id="rWarnL"></div>
     </div>
     <div class="card">
-      <div class="cardtitle"><span data-i18n="learnFilterTitle">🗂️ Что повторяем?</span></div>
+      <div class="cardtitle"><span data-i18n="learnFilterTitle">📊 Статус в диапазоне</span></div>
       <div class="folders" id="learnStatusFilter">
-        <div class="folder pick active new" data-status="new" role="button" tabindex="0"><div class="n" id="cNewL">0</div><div class="l" data-i18n="lblNew">Новые</div></div>
-        <div class="folder pick active notlearned" data-status="notlearned" role="button" tabindex="0"><div class="n" id="cNotL">0</div><div class="l" data-i18n="lblNotLearned">Невыучено</div></div>
-        <div class="folder pick active repeated" data-status="repeated" role="button" tabindex="0"><div class="n" id="cRepeatedL">0</div><div class="l" data-i18n="lblRepeated">Повторено</div></div>
-        <div class="folder pick active learned" data-status="learned" role="button" tabindex="0"><div class="n" id="cLearnedL">0</div><div class="l" data-i18n="lblLearned">Выучено</div></div>
+        <div class="folder new"><div class="n" id="cNewL">0</div><div class="l" data-i18n="lblNew">Новые</div></div>
+        <div class="folder notlearned"><div class="n" id="cNotL">0</div><div class="l" data-i18n="lblNotLearned">Невыучено</div></div>
+        <div class="folder repeated"><div class="n" id="cRepeatedL">0</div><div class="l" data-i18n="lblRepeated">Повторено</div></div>
+        <div class="folder learned"><div class="n" id="cLearnedL">0</div><div class="l" data-i18n="lblLearned">Выучено</div></div>
       </div>
       <div class="divider"></div>
       <div class="row">
         <button class="primary" id="learnStartBtn" data-i18n="learnStartBtn">▶ Начать</button>
       </div>
-      <div class="foot" data-i18n="learnSetupFoot">Диапазон и фильтр запоминаются, пока открыта эта страница.</div>
+      <div class="foot" data-i18n="learnSetupFoot">В повторение попадают все глаголы диапазона, независимо от статуса.</div>
     </div>
   </div>
 
@@ -416,6 +417,7 @@
   <div id="learnDeckScreen" class="hide">
     <div class="row" style="margin-bottom:10px">
       <button class="ghost" id="learnFinishBtn" data-i18n="learnFinishBtn">Завершить</button>
+      <button class="ghost" id="learnCheckBtn" data-i18n="learnCheckBtn">Перейти к тренажёру</button>
     </div>
     <div class="learncard-wrap" id="learnCardWrap">
       <img class="learncard-img" id="learnCardImg" alt="" draggable="false">
@@ -432,6 +434,20 @@
       <div class="learncard-example" id="learnCardExample"></div>
     </div>
     <div class="foot" data-i18n="learnTapHint">Тап по карточке — рассмотреть · свайп — следующая карточка</div>
+  </div>
+
+  <!-- LEARN: COMPLETE -->
+  <div id="learnCompleteScreen" class="hide">
+    <div class="card">
+      <div class="scorebig">🎉</div>
+      <div class="scoresub" data-i18n="learnCompleteTitle">Повтор завершён</div>
+    </div>
+    <div class="card">
+      <div class="row">
+        <button class="primary" id="learnCompleteTestBtn" data-i18n="learnCompleteTestBtn">🧪 Перейти к тренировке</button>
+        <button class="ghost" id="learnCompleteHomeBtn" data-i18n="againBtn">🏠 На главную</button>
+      </div>
+    </div>
   </div>
 
   <div class="foot"><a href="https://github.com/kiselkath/DieFliegendeKuhApp" target="_blank" rel="noopener" style="color:inherit" data-i18n="footerCredit">Собрано kiselkath</a></div>
@@ -521,6 +537,7 @@ const I18N = {
     presetAll:"Все 1–270",
     rangeWarn:(max)=>`Укажите корректный диапазон: числа от 1 до ${max}, «от» ≤ «до».`,
     inDiap:(from,to)=>`в диапазоне ${from}–${to}`,
+    resultAllScope:(n)=>`по всем ${n} глаголам`,
     savedInfo:(d)=>{ try{ return "💾 Прогресс сохранён · "+d.toLocaleString('ru-RU'); }catch(e){ return ""; } },
     saveUnavailable:"⚠ Автосохранение недоступно — используйте «Экспорт».",
     modes:[
@@ -549,10 +566,11 @@ const I18N = {
     dictAllForms:"все формы для повторения", dictEmpty:"Ничего не найдено.",
     actLearned:"Выучено", actNotLearned:"Невыучено", actNew:"Новое", actRepeated:"Повторено",
     verbWord:(n)=>{ const f=["глагол","глагола","глаголов"]; const a=n%10,b=n%100; if(a===1&&b!==11)return f[0]; if(a>=2&&a<=4&&(b<10||b>=20))return f[1]; return f[2]; },
-    learnFilterTitle:"🗂️ Что повторяем?", learnStartBtn:"▶ Начать",
-    learnFinishBtn:"Завершить",
-    learnSetupFoot:"Диапазон и фильтр запоминаются, пока открыта эта страница.",
-    learnTapHint:"Тап по карточке — рассмотреть · свайп — следующая карточка",
+    learnFilterTitle:"📊 Статус в диапазоне", learnStartBtn:"▶ Начать",
+    learnFinishBtn:"Завершить", learnCheckBtn:"Перейти к тренажёру",
+    learnSetupFoot:"В повторение попадают все глаголы диапазона, независимо от статуса.",
+    learnTapHint:"Тап по карточке — рассмотреть · вправо — «повторено» · влево — «невыучено»",
+    learnCompleteTitle:"Повтор завершён", learnCompleteTestBtn:"🧪 Перейти к тренировке",
   },
   en:{
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Trainer, Dictionary & Flashcards",
@@ -581,6 +599,7 @@ const I18N = {
     presetAll:"All 1–270",
     rangeWarn:(max)=>`Please enter a valid range: numbers from 1 to ${max}, “from” ≤ “to”.`,
     inDiap:(from,to)=>`in range ${from}–${to}`,
+    resultAllScope:(n)=>`across all ${n} verbs`,
     savedInfo:(d)=>{ try{ return "💾 Progress saved · "+d.toLocaleString('en-US'); }catch(e){ return ""; } },
     saveUnavailable:"⚠ Auto-save unavailable — use “Export”.",
     modes:[
@@ -609,10 +628,11 @@ const I18N = {
     dictAllForms:"all forms for review", dictEmpty:"Nothing found.",
     actLearned:"Learned", actNotLearned:"Not learned", actNew:"New", actRepeated:"Repeated",
     verbWord:(n)=> n===1 ? "verb" : "verbs",
-    learnFilterTitle:"🗂️ What to review?", learnStartBtn:"▶ Start",
-    learnFinishBtn:"Finish",
-    learnSetupFoot:"The range and filter are remembered while this page stays open.",
-    learnTapHint:"Tap the card to reveal more · swipe for the next card",
+    learnFilterTitle:"📊 Status in this range", learnStartBtn:"▶ Start",
+    learnFinishBtn:"Finish", learnCheckBtn:"Go to trainer",
+    learnSetupFoot:"All verbs in the range are included, regardless of status.",
+    learnTapHint:"Tap the card to reveal more · right — “repeated” · left — “not learned”",
+    learnCompleteTitle:"Repeat session finished", learnCompleteTestBtn:"🧪 Go to training",
   },
   it:{
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Esercitatore, dizionario e schede",
@@ -641,6 +661,7 @@ const I18N = {
     presetAll:"Tutti 1–270",
     rangeWarn:(max)=>`Inserisci un intervallo valido: numeri da 1 a ${max}, «da» ≤ «a».`,
     inDiap:(from,to)=>`nell'intervallo ${from}–${to}`,
+    resultAllScope:(n)=>`su tutti i ${n} verbi`,
     savedInfo:(d)=>{ try{ return "💾 Progresso salvato · "+d.toLocaleString('it-IT'); }catch(e){ return ""; } },
     saveUnavailable:"⚠ Salvataggio automatico non disponibile — usa «Esporta».",
     modes:[
@@ -669,10 +690,11 @@ const I18N = {
     dictAllForms:"tutte le forme per il ripasso", dictEmpty:"Nessun risultato.",
     actLearned:"Imparato", actNotLearned:"Non imparato", actNew:"Nuovo", actRepeated:"Ripassato",
     verbWord:(n)=> n===1 ? "verbo" : "verbi",
-    learnFilterTitle:"🗂️ Cosa ripassiamo?", learnStartBtn:"▶ Inizia",
-    learnFinishBtn:"Termina",
-    learnSetupFoot:"L'intervallo e il filtro vengono memorizzati finché questa pagina resta aperta.",
-    learnTapHint:"Tocca la carta per vedere di più · scorri per la carta successiva",
+    learnFilterTitle:"📊 Stato nell'intervallo", learnStartBtn:"▶ Inizia",
+    learnFinishBtn:"Termina", learnCheckBtn:"Vai all'esercitatore",
+    learnSetupFoot:"Nel ripasso rientrano tutti i verbi dell'intervallo, indipendentemente dallo stato.",
+    learnTapHint:"Tocca la carta per vedere di più · destra — «ripassato» · sinistra — «non imparato»",
+    learnCompleteTitle:"Ripasso completato", learnCompleteTestBtn:"🧪 Vai all'allenamento",
   }
 };
 function t(key){ return I18N[lang][key]; }
@@ -770,7 +792,7 @@ function checkTrans(v,ans){ const a=normRu(ans); if(!a)return false;
 function vTransOf(v){ return v[TRANS_FIELD[lang]]; }
 
 /* ---------- НАВИГАЦИЯ / ЭКРАНЫ ---------- */
-const SCREENS={home:"startScreen",dict:"dictScreen",quiz:"quizScreen",result:"resultScreen",learnSetup:"learnSetupScreen",learnDeck:"learnDeckScreen"};
+const SCREENS={home:"startScreen",dict:"dictScreen",quiz:"quizScreen",result:"resultScreen",learnSetup:"learnSetupScreen",learnDeck:"learnDeckScreen",learnComplete:"learnCompleteScreen"};
 const NAV_OF={home:"home",dict:"dict",learnSetup:"learn",learnDeck:"learn"};
 function show(name){ Object.values(SCREENS).forEach(id=>document.getElementById(id).classList.add("hide")); document.getElementById(SCREENS[name]).classList.remove("hide");
   const navVisible = (name==="home"||name==="dict"||name==="learnSetup"); document.getElementById("nav").classList.toggle("hide", !navVisible);
@@ -810,7 +832,7 @@ function startQuiz(mode){
   if(!askT&&!askP){ alert(t("alertChooseOne")); return; }
   const queue=buildQueue(mode);
   if(queue.length===0){ alert(t("alertEmptyPool")); return; }
-  session={queue,idx:0,results:[],askT,askP}; show("quiz"); renderQuestion();
+  session={queue,idx:0,results:[],askT,askP,before:counts_all()}; show("quiz"); renderQuestion();
 }
 function renderQuestion(){
   const v=session.queue[session.idx], total=session.queue.length;
@@ -851,8 +873,12 @@ function showResults(){
   document.getElementById("pfill").style.width="100%"; document.getElementById("rScore").textContent=`${correct} / ${total}`;
   const verdict=pct===100?t("verdictPerfect"):pct>=80?t("verdictGreat"):pct>=50?t("verdictOk"):t("verdictBad");
   document.getElementById("rSub").textContent=`${pct}% · ${verdict}`;
-  const c=counts(); document.getElementById("rLearned").textContent=c.learned; document.getElementById("rNot").textContent=c.notlearned; document.getElementById("rRepeated").textContent=c.repeated; document.getElementById("rNew").textContent=c["new"];
-  const {from,to}=getRange(); document.getElementById("rFoldersSub").textContent=t("inDiap")(from,to);
+  const before=session.before||counts_all(), after=counts_all();
+  const dLearned=after.learned-before.learned, dNot=after.notlearned-before.notlearned;
+  document.getElementById("rLearned").textContent=`${before.learned} + ${dLearned} = ${after.learned}`;
+  document.getElementById("rNot").textContent=`${before.notlearned} + ${dNot} = ${after.notlearned}`;
+  document.getElementById("rRepeated").textContent=after.repeated; document.getElementById("rNew").textContent=after["new"];
+  document.getElementById("rFoldersSub").textContent=t("resultAllScope")(MAXID);
   const wrong=res.filter(r=>!r.ok); const errBody=document.getElementById("errBody"), errIntro=document.getElementById("errIntro");
   if(wrong.length===0){ errIntro.textContent=t("noErrors"); errBody.innerHTML=""; }
   else{ errIntro.innerHTML=t("errIntro")(wrong.length,total); let rows="";
@@ -867,7 +893,7 @@ function escapeHtml(s){ return (s||"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&
 function retryWrong(){ const ids=(session&&session._wrongIds)||[]; if(ids.length===0){ alert(t("alertNoWrong")); return; }
   const askT=document.getElementById("chkTrans").checked, askP=document.getElementById("chkPerf").checked; let queue=ids.map(id=>BYID[id]);
   if(document.getElementById("chkShuffle").checked){ for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];} }
-  session={queue,idx:0,results:[],askT,askP}; show("quiz"); renderQuestion(); }
+  session={queue,idx:0,results:[],askT,askP,before:counts_all()}; show("quiz"); renderQuestion(); }
 
 /* ---------- СЛОВАРЬ ---------- */
 let dictFilter="all";
@@ -906,15 +932,12 @@ function verbImgPath(v){ return "verb-images/"+String(v.id).padStart(3,"0")+"-"+
 function learnRange(){ return {from:parseInt(document.getElementById("rFromL").value,10), to:parseInt(document.getElementById("rToL").value,10)}; }
 function learnRangeValid(){ const {from,to}=learnRange(); return Number.isInteger(from)&&Number.isInteger(to)&&from>=1&&to<=MAXID&&from<=to; }
 function learnInRange(v){ const {from,to}=learnRange(); return v.id>=from && v.id<=to; }
-function learnStatusesChecked(){
-  const st={}; document.querySelectorAll("#learnStatusFilter .folder").forEach(el=>{ st[el.dataset.status]=el.classList.contains("active"); });
-  return st;
-}
 function learnCounts(){ let l=0,n=0,nw=0,r=0; VERBS.filter(learnInRange).forEach(v=>{ const s=status[v.id]; if(s==="learned")l++; else if(s==="notlearned")n++; else if(s==="repeated")r++; else nw++; }); return {learned:l,notlearned:n,repeated:r,"new":nw}; }
 function refreshLearnFolders(){ const c=learnCounts();
   document.getElementById("cLearnedL").textContent=c.learned; document.getElementById("cNotL").textContent=c.notlearned;
   document.getElementById("cRepeatedL").textContent=c.repeated; document.getElementById("cNewL").textContent=c["new"]; }
-function buildLearnQueue(){ const st=learnStatusesChecked(); return VERBS.filter(learnInRange).filter(v=>st[status[v.id]]); }
+/* Повторение всегда стартует со всех глаголов диапазона, независимо от статуса — набор сокращается по ходу сессии. */
+function buildLearnQueue(){ return VERBS.filter(learnInRange); }
 function renderLearnPresets(){
   const box=document.getElementById("presetsL"); box.innerHTML="";
   PRESETS.forEach(([a,b])=>{ const btn=document.createElement("button"); btn.textContent=a+"–"+b; btn.dataset.a=a; btn.dataset.b=b;
@@ -930,16 +953,21 @@ function onLearnRangeChange(){
   markActivePresetL(); refreshLearnFolders();
 }
 let learnDeck=null, cardState=0, learnDrag=null;
+function learnGoToTest(){
+  const {from,to}=learnRange();
+  document.getElementById("rFrom").value=from; document.getElementById("rTo").value=to;
+  onRangeChange();
+  learnDeck=null;
+  startQuiz("all");
+}
 function startLearnDeck(){
   if(!learnRangeValid()){ alert(t("alertNoRange")); return; }
-  const st=learnStatusesChecked();
-  if(!st["new"]&&!st.notlearned&&!st.repeated&&!st.learned){ alert(t("alertChooseStatus")); return; }
-  const queue=buildLearnQueue();
-  if(queue.length===0){ alert(t("alertEmptyPool")); return; }
-  learnDeck={queue,idx:0}; cardState=0; show("learnDeck"); renderLearnCard();
+  const pool=buildLearnQueue();
+  if(pool.length===0){ alert(t("alertEmptyPool")); return; }
+  learnDeck={pool}; cardState=0; show("learnDeck"); renderLearnCard();
 }
 function renderLearnCard(){
-  const v=learnDeck.queue[learnDeck.idx];
+  const v=learnDeck.pool[0];
   const img=document.getElementById("learnCardImg"), fallback=document.getElementById("learnCardFallback");
   fallback.classList.add("hide"); img.classList.remove("hide");
   img.onerror=()=>{ img.classList.add("hide"); fallback.classList.remove("hide"); };
@@ -951,7 +979,7 @@ function renderLearnCard(){
   document.getElementById("learnCardTrans").textContent=vTransOf(v);
   document.getElementById("learnCardExample").textContent=v.example||"";
   cardState=0; applyLearnCardState();
-  const nextV=learnDeck.queue[(learnDeck.idx+1)%learnDeck.queue.length];
+  const nextV=learnDeck.pool[1];
   if(nextV){ const pre=new Image(); pre.src=verbImgPath(nextV); }
 }
 function applyLearnCardState(){
@@ -981,9 +1009,21 @@ function learnAnimateOut(dir,cb){
 }
 function learnSwipe(dir){
   if(!learnDeck) return;
-  const v=learnDeck.queue[learnDeck.idx];
-  if(status[v.id]==="new"){ status[v.id]=dir==="right"?"repeated":"notlearned"; saveProgress(); refreshFolders(); renderModes(); }
-  learnAnimateOut(dir, ()=>{ learnDeck.idx=(learnDeck.idx+1)%learnDeck.queue.length; renderLearnCard(); });
+  const pool=learnDeck.pool, v=pool[0];
+  if(dir==="right"){
+    // Выучено — просвайпать вправо не понижает статус, но карточка всё равно уходит из текущего набора.
+    if(status[v.id]!=="learned") status[v.id]="repeated";
+    pool.shift();
+  }else{
+    // Влево — всегда «невыучено» (даже если было «выучено»: слово забыто, возвращается в пул незнакомых).
+    status[v.id]="notlearned";
+    pool.shift(); pool.push(v);
+  }
+  saveProgress(); refreshFolders(); refreshLearnFolders(); renderModes();
+  learnAnimateOut(dir, ()=>{
+    if(pool.length===0){ learnDeck=null; show("learnComplete"); }
+    else renderLearnCard();
+  });
 }
 function learnPointerDown(e){
   if(!learnDeck) return;
@@ -1061,11 +1101,10 @@ document.querySelectorAll('#langToggle button').forEach(b=>b.addEventListener("c
 document.getElementById("rFromL").addEventListener("input",onLearnRangeChange);
 document.getElementById("rToL").addEventListener("input",onLearnRangeChange);
 document.getElementById("learnStartBtn").addEventListener("click",startLearnDeck);
-document.querySelectorAll("#learnStatusFilter .folder").forEach(el=>{
-  el.addEventListener("click",()=>el.classList.toggle("active"));
-  el.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); el.classList.toggle("active"); } });
-});
-document.getElementById("learnFinishBtn").addEventListener("click",()=>show("learnSetup"));
+document.getElementById("learnFinishBtn").addEventListener("click",()=>{ learnDeck=null; show("learnSetup"); });
+document.getElementById("learnCheckBtn").addEventListener("click",learnGoToTest);
+document.getElementById("learnCompleteTestBtn").addEventListener("click",learnGoToTest);
+document.getElementById("learnCompleteHomeBtn").addEventListener("click",()=>show("home"));
 (function(){ const wrap=document.getElementById("learnCardWrap");
   wrap.addEventListener("pointerdown",learnPointerDown);
   wrap.addEventListener("pointermove",learnPointerMove);
