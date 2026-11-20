@@ -177,7 +177,7 @@
   :root{--font-display:"VT323","Handjet",ui-monospace,"Courier New",monospace; --font-text:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
   /* Типографика: основной текст — системный шрифт (body); VT323 — только заголовки, кнопки, крупные цифры и флеш-карточка */
   h1, button, .nav button, .cardtitle, #errCard > div:first-child, .folder .n, .scorebig, .learncard-wrap,
-  .st-eyebrow, .st-time, .st-banner, .st-label, .st-tap span, .st-cardno{font-family:var(--font-display); letter-spacing:.4px; -webkit-font-smoothing:none}
+  .st-time, .st-banner, .st-label, .st-tap span, .st-cardno{font-family:var(--font-display); letter-spacing:.4px; -webkit-font-smoothing:none}
   button{border-radius:6px}
   .field input, .rangebar input, .dsearch,
   .dtable, .dscroll, label.opt,
@@ -235,33 +235,78 @@
   .dtop{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom)); z-index:6; width:48px; height:48px; padding:0; display:inline-flex; align-items:center; justify-content:center; background:var(--accent); color:var(--aink); border-color:transparent; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
   .dtop.show{opacity:1; pointer-events:auto}
   .dtop svg{display:block}
+  /* ---------- ПОРЦИИ: выбор диапазона (тренажёр и карточки) ---------- */
+  .portion{display:flex; flex-direction:column; gap:10px}
+  .pseg{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px}
+  .pseg button{padding:8px 2px; font-size:18px; white-space:nowrap}
+  .pseg button.sel{background:var(--accent); color:var(--aink); border-color:transparent}
+  .pstep{display:grid; grid-template-columns:48px minmax(0,1fr) 48px; gap:8px; align-items:center}
+  .pstep button{height:48px; padding:0; display:inline-flex; align-items:center; justify-content:center}
+  .pstep button svg{display:block}
+  .pmid{text-align:center; line-height:1.15}
+  .pmid b{display:block; font-family:var(--font-display); font-weight:400; font-size:34px; line-height:1; letter-spacing:.4px; -webkit-font-smoothing:none; font-variant-numeric:tabular-nums}
+  .pmid span{font-size:13px; color:var(--muted)}
+  /* Карточки → «Что повторяем?»: крупные плитки по две в ряд с картинкой-превью */
+  #learnStatusFilter{grid-template-columns:repeat(2,minmax(0,1fr)); max-width:460px; margin-left:auto; margin-right:auto}
+  #learnStatusFilter .folder{position:relative; aspect-ratio:4/5; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding:12px; border-width:3px; transition:opacity .15s}
+  #learnStatusFilter .folder:not(.active){border-style:dashed}
+  #learnStatusFilter .folder:not(.active) .n, #learnStatusFilter .folder:not(.active) .l{opacity:.55}
+  #learnStatusFilter .pick-off{position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:2; display:none; white-space:nowrap; font-size:12.5px; font-weight:600; padding:3px 9px; border-radius:20px; background:var(--panel); color:var(--muted); border:1px solid var(--line)}
+  #learnStatusFilter .folder:not(.active) .pick-off{display:block}
+  #learnStatusFilter .pick-img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none}
+  #learnStatusFilter .has-img .pick-img{display:block}
+  #learnStatusFilter .folder:not(.active) .pick-img{filter:grayscale(1); opacity:.5}
+  #learnStatusFilter .has-img::after{content:""; position:absolute; inset:0; background:linear-gradient(transparent 40%, rgba(0,0,0,.8)); pointer-events:none}
+  #learnStartBtn{width:100%; max-width:460px; margin:0 auto; padding-top:14px; padding-bottom:14px}
+  /* лёгкий оверлей цвета папки поверх картинки */
+  #learnStatusFilter .has-img::before{content:""; position:absolute; inset:0; z-index:1; opacity:.32; pointer-events:none; background:var(--accent2)}
+  #learnStatusFilter .has-img.learned::before{background:var(--ok)}
+  #learnStatusFilter .has-img.notlearned::before{background:var(--err)}
+  #learnStatusFilter .has-img.repeated::before{background:var(--rep)}
+  #learnStatusFilter .has-img::after{z-index:1}
+  #learnStatusFilter .folder .n, #learnStatusFilter .folder .l{position:relative; z-index:2}
+  #learnStatusFilter .has-img .n, #learnStatusFilter .has-img .l{color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.7)}
+  #learnStatusFilter .folder .n{font-size:38px}
+  #learnStatusFilter .folder .l{font-size:15px; font-weight:700; margin-top:4px}
+  /* Статистика диапазона: полоса из цветных отрезков + легенда */
+  .statbar{display:flex; gap:2px; height:16px; margin-top:16px; border-radius:6px; overflow:hidden; background:var(--panel2)}
+  .statbar i{flex:0 1 auto; min-width:0}
+  .statbar i.learned{background:var(--ok)} .statbar i.notlearned{background:var(--err)}
+  .statbar i.repeated{background:var(--rep)} .statbar i.new{background:var(--accent2)}
+  .statlegend{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:10px; font-size:14px; color:var(--muted)}
+  .statlegend > span{display:inline-flex; align-items:center; gap:5px; white-space:nowrap}
+  .statlegend b{color:var(--txt); font-variant-numeric:tabular-nums}
+  .statlegend .sdot{margin:0; border-radius:3px; width:11px; height:11px}
   /* ---------- SMALL TALK (DTB B2) ---------- */
-  body.st-mode{padding-bottom:130px}
+  body.st-mode{padding-top:12px; padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+  /* Small Talk: экран без шапки и подвала — всё должно помещаться на телефоне без прокрутки */
+  body.st-mode header.top, body.st-mode .wrap > .foot{display:none}
   .st-back{width:44px; height:44px; padding:0; display:inline-flex; align-items:center; justify-content:center}
   .st-back svg{display:block}
-  .st-top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
-  .st-cardno{font-size:17px; color:var(--muted); font-variant-numeric:tabular-nums}
-  .st-eyebrow{font-size:16px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin:0; text-align:center}
-  .st-timer{text-align:center; margin:6px 0 14px}
-  .st-time{font-size:clamp(88px,26vw,140px); line-height:.9; font-variant-numeric:tabular-nums; color:var(--muted); transition:color .2s}
+  .st-top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+  .st-done{position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; padding:16px; text-align:center; background:var(--accent); color:var(--aink); font-family:var(--font-display); -webkit-font-smoothing:none; font-size:min(19vw,150px); line-height:1; cursor:pointer; animation:stPulse .7s ease-in-out 3}
+  .st-cardno{font-size:17px; color:var(--muted); font-variant-numeric:tabular-nums; height:44px; min-width:44px; padding:0 12px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:6px}
+  .st-cardno:empty{visibility:hidden}
+  .st-timer{text-align:center; margin:0 0 10px}
+  .st-time{font-size:min(54vw,240px); line-height:.78; margin-top:6px; font-variant-numeric:tabular-nums; color:var(--muted); transition:color .2s}
   .st-timer.running .st-time{color:var(--txt)}
   :root:not([data-scheme="light"]) .st-timer.running .st-time{text-shadow:0 0 14px rgba(131,199,72,.45)}
   .st-timer.last .st-time, .st-timer.done .st-time{color:var(--err)}
-  .st-bar{height:10px; background:var(--panel2); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; max-width:440px; margin:12px auto 0}
+  .st-bar{height:10px; background:var(--panel2); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; max-width:440px; margin:8px auto 0}
   .st-bar i{display:block; height:100%; width:100%; background:var(--accent); transform-origin:left}
   .st-timer.last .st-bar i, .st-timer.done .st-bar i{background:var(--err)}
-  .st-status{min-height:28px; margin:10px 0 0; color:var(--muted)}
+  .st-status{min-height:24px; margin:6px 0 0; color:var(--muted)}
   .st-status b{color:var(--txt); font-weight:600}
   .st-banner{text-align:center; background:var(--errbg); color:var(--err); border:1px solid var(--err); border-radius:var(--radius); padding:10px 14px; font-size:26px; margin:0 0 14px; animation:stPulse .7s ease-in-out 4}
   .st-banner span{display:block; color:var(--txt); font-size:18px}
   @keyframes stPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
   .card.st-card{padding:0; overflow:hidden}
-  .st-topic{display:block; width:100%; text-align:left; background:none; border:none; border-radius:0; padding:18px 20px 20px; position:relative; font-weight:400; color:var(--txt)}
+  .st-topic{display:block; width:100%; text-align:left; background:none; border:none; border-radius:0; padding:14px 18px 16px; position:relative; font-weight:400; color:var(--txt)}
   .st-topic:hover{transform:none; background:var(--panel2)}
   .st-topic + .st-topic{border-top:1px dashed var(--line)}
   .st-topic.active{background:var(--okbg)}
   .st-topic:focus-visible{outline:2px solid var(--accent2); outline-offset:-2px}
-  .st-label{display:flex; align-items:center; gap:10px; font-size:17px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin:0 0 8px}
+  .st-label{display:flex; align-items:center; gap:10px; font-size:17px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin:0 0 6px}
   .st-label .nr{letter-spacing:0; text-transform:none; color:var(--muted)}
   .st-label .chk{margin-left:auto; color:var(--ok); letter-spacing:0; text-transform:none}
   /* Текст тем — читаемый системный шрифт вместо декоративного VT323 */
@@ -307,26 +352,34 @@
   <!-- HOME -->
   <div id="startScreen">
     <div class="card">
-      <div class="cardtitle"><span data-i18n="rangeTitle">📍 Диапазон глаголов</span> <span class="sub" id="rangeCount"></span></div>
-      <div class="rangebar">
-        <label><span data-i18n="lblFrom">от</span> <input type="number" id="rFrom" min="1" max="270" value="1"></label>
-        <label><span data-i18n="lblTo">до</span> <input type="number" id="rTo" min="1" max="270" value="35"></label>
+      <div class="cardtitle"><span data-i18n="rangeTitle">Диапазон глаголов</span> <span class="sub" id="rangeCount"></span></div>
+      <div class="portion">
+        <div class="pseg">
+          <button type="button" data-size="20"></button>
+          <button type="button" data-size="35"></button>
+          <button type="button" data-size="50"></button>
+          <button type="button" data-size="all"></button>
+        </div>
+        <div class="pstep">
+          <button type="button" class="pprev" aria-label="‹"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="pmid"><b class="prange"></b><span class="ppart"></span></div>
+          <button type="button" class="pnext" aria-label="›"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
       </div>
-      <div class="presets" id="presets"></div>
+      <div class="hide"><input type="number" id="rFrom" min="1" max="270" value="1"><input type="number" id="rTo" min="1" max="270" value="270"></div>
       <div class="rwarn hide" id="rWarn"></div>
-    </div>
-    <div class="card">
-      <div class="folders">
-        <div class="folder learned"><div class="n" id="cLearned">0</div><div class="l" data-i18n="lblLearned">Выучено</div></div>
-        <div class="folder notlearned"><div class="n" id="cNot">0</div><div class="l" data-i18n="lblNotLearned">Невыучено</div></div>
-        <div class="folder repeated"><div class="n" id="cRepeated">0</div><div class="l" data-i18n="lblRepeated">Повторено</div></div>
-        <div class="folder new"><div class="n" id="cNew">0</div><div class="l" data-i18n="lblNew">Новые</div></div>
+      <div class="statbar" id="statBar" aria-hidden="true"><i class="learned"></i><i class="notlearned"></i><i class="repeated"></i><i class="new"></i></div>
+      <div class="statlegend">
+        <span><i class="sdot learned"></i><b id="cLearned">0</b> <span data-i18n="lblLearned">Выучено</span></span>
+        <span><i class="sdot notlearned"></i><b id="cNot">0</b> <span data-i18n="lblNotLearned">Невыучено</span></span>
+        <span><i class="sdot repeated"></i><b id="cRepeated">0</b> <span data-i18n="lblRepeated">Повторено</span></span>
+        <span><i class="sdot new"></i><b id="cNew">0</b> <span data-i18n="lblNew">Новые</span></span>
       </div>
-      <div class="foot" id="foldersSub"></div>
+      <div class="foot hide" id="foldersSub"></div>
       <div class="foot" id="savedInfo"></div>
     </div>
     <div class="card">
-      <div class="cardtitle"><span data-i18n="whatTrainTitle">🎯 Что тренируем</span> <span class="sub" data-i18n="whatTrainSub">в выбранном диапазоне</span></div>
+      <div class="cardtitle"><span data-i18n="whatTrainTitle">Что тренируем</span> <span class="sub" data-i18n="whatTrainSub">в выбранном диапазоне</span></div>
       <div class="modes" id="modeList"></div>
       <div class="row">
         <label class="opt"><input type="checkbox" id="chkShuffle" checked> <span data-i18n="chkShuffleLbl">Перемешать</span></label>
@@ -349,7 +402,7 @@
   <!-- DICTIONARY -->
   <div id="dictScreen" class="hide">
     <div class="card">
-      <div class="cardtitle"><span data-i18n="dictTitle">📖 Словарь глаголов</span> <span class="sub" id="dictSub"></span></div>
+      <div class="cardtitle"><span data-i18n="dictTitle">Словарь глаголов</span> <span class="sub" id="dictSub"></span></div>
       <div class="dbar" id="dictBar">
       <input class="dsearch" id="dictSearch" data-i18n-placeholder="dictSearchPh" placeholder="Поиск: инфинитив, перевод или номер…">
       <div class="filterchips" id="dictFilters">
@@ -428,7 +481,7 @@
     <div class="card">
       <div class="row">
         <button class="primary" id="retryWrong" data-i18n="retryWrongBtn">↻ Повторить ошибки этого теста</button>
-        <button class="ghost" id="againBtn" data-i18n="againBtn">🏠 На главную</button>
+        <button class="ghost" id="againBtn" data-i18n="againBtn">На главную</button>
         <button class="ghost" id="exportBtn2" data-i18n="exportBtn">⬇ Экспорт</button>
       </div>
     </div>
@@ -437,16 +490,9 @@
   <!-- LEARN: SETUP -->
   <div id="learnSetupScreen" class="hide">
     <div class="card">
-      <div class="cardtitle"><span data-i18n="rangeTitle">📍 Диапазон глаголов</span> <span class="sub" id="rangeCountL"></span></div>
-      <div class="rangebar">
-        <label><span data-i18n="lblFrom">от</span> <input type="number" id="rFromL" min="1" max="270" value="1"></label>
-        <label><span data-i18n="lblTo">до</span> <input type="number" id="rToL" min="1" max="270" value="35"></label>
-      </div>
-      <div class="presets" id="presetsL"></div>
+      <div class="cardtitle"><span data-i18n="learnFilterTitle">Что повторяем?</span> <span class="sub" id="rangeCountL"></span></div>
+      <div class="hide"><input type="number" id="rFromL" min="1" max="270" value="1"><input type="number" id="rToL" min="1" max="270" value="270"></div>
       <div class="rwarn hide" id="rWarnL"></div>
-    </div>
-    <div class="card">
-      <div class="cardtitle"><span data-i18n="learnFilterTitle">🗂️ Что повторяем?</span></div>
       <div class="folders" id="learnStatusFilter">
         <div class="folder pick active new" data-status="new" role="button" tabindex="0"><div class="n" id="cNewL">0</div><div class="l" data-i18n="lblNew">Новые</div></div>
         <div class="folder pick active notlearned" data-status="notlearned" role="button" tabindex="0"><div class="n" id="cNotL">0</div><div class="l" data-i18n="lblNotLearned">Невыучено</div></div>
@@ -493,19 +539,18 @@
     <div class="card">
       <div class="row">
         <button class="primary" id="learnCompleteTestBtn" data-i18n="learnCompleteTestBtn">🧪 Перейти к тренировке</button>
-        <button class="ghost" id="learnCompleteHomeBtn" data-i18n="againBtn">🏠 На главную</button>
+        <button class="ghost" id="learnCompleteHomeBtn" data-i18n="againBtn">На главную</button>
       </div>
     </div>
   </div>
 
   <!-- SMALL TALK (DTB B2) -->
   <div id="smalltalkScreen" class="hide">
-    <div class="st-top">
-      <button class="ghost st-back" id="stBackBtn" type="button" data-i18n-aria="stBack" aria-label="Назад" title="Назад"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7"/></svg></button>
-      <span class="st-cardno" id="stCardNo"></span>
-    </div>
-    <p class="st-eyebrow">DTB B2 · Small Talk · 2 Minuten</p>
     <div class="st-timer" id="stTimer">
+      <div class="st-top">
+        <button class="ghost st-back" id="stBackBtn" type="button" data-i18n-aria="stBack" aria-label="Назад" title="Назад"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7"/></svg></button>
+        <span class="st-cardno" id="stCardNo"></span>
+      </div>
       <div class="st-time" id="stTime">2:00</div>
       <div class="st-bar"><i id="stBar"></i></div>
       <p class="st-status" id="stStatus" aria-live="polite"></p>
@@ -530,6 +575,8 @@
       <button class="primary" id="stNextBtn" type="button"><span data-i18n="stNext">Новая карта</span><small data-i18n="stNextSub">другие темы</small></button>
     </div></div>
   </div>
+
+  <div class="st-done hide" id="stDoneOverlay" role="status"></div>
 
   <div class="foot"><a href="https://github.com/kiselkath/DieFliegendeKuhApp" target="_blank" rel="noopener" style="color:inherit" data-i18n="footerCredit">Собрано kiselkath</a></div>
 </div>
@@ -570,15 +617,15 @@ const I18N = {
     motto:"«Делу время, потехе — му»", mottoAuthor:"— Иммуунуил Кант",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Тренажёр, словарь и карточки",
     navHome:"Тренажёр", navDict:"Словарь", navLearn:"Карточки", navSmalltalk:"Small Talk", stBack:"Назад",
-    rangeTitle:"📍 Диапазон глаголов",
+    rangeTitle:"Диапазон глаголов",
     lblFrom:"от", lblTo:"до",
     lblLearned:"Выучено", lblNotLearned:"Невыучено", lblNew:"Новые", lblRepeated:"Повторено",
-    whatTrainTitle:"🎯 Что тренируем", whatTrainSub:"в выбранном диапазоне",
+    whatTrainTitle:"Что тренируем", whatTrainSub:"в выбранном диапазоне",
     chkShuffleLbl:"Перемешать", chkTransLbl:"Спрашивать перевод", chkPerfLbl:"Спрашивать Perfekt",
     startBtn:"▶ Начать тест", dictShortcut:"📖 Открыть словарь",
     exportBtn:"⬇ Экспорт", importBtn:"⬆ Импорт", resetBtn:"↺ Сброс",
     autosaveFoot:"Прогресс автосохраняется в этом браузере. «Экспорт» скачивает файл прогресса с датой и временем в названии.",
-    dictTitle:"📖 Словарь глаголов", dictSearchPh:"Поиск: инфинитив, перевод или номер…",
+    dictTitle:"Словарь глаголов", dictSearchPh:"Поиск: инфинитив, перевод или номер…",
     filterAll:"Все 270", filterRange:"В диапазоне",
     hideTransLbl:"Скрыть перевод", hidePerfLbl:"Скрыть Perfekt",
     selfCheckFoot:"Режим самопроверки: включи «скрыть» и нажимай на ячейку, чтобы открыть ответ.",
@@ -588,9 +635,9 @@ const I18N = {
     overrideQ:"Засчитать перевод?", chipCorrect:"✓ Верно", chipWrong:"✗ Ошибка",
     checkBtn:"Проверить", nextBtn:"Дальше →", quitBtn:"Завершить", enterHint:"проверить / дальше",
     errCardTitle:"Разбор ошибок",
-    retryWrongBtn:"↻ Повторить ошибки этого теста", againBtn:"🏠 На главную",
+    retryWrongBtn:"↻ Повторить ошибки этого теста", againBtn:"На главную",
     footerCredit:"Собрано kiselkath",
-    presetAll:"Все 1–270",
+    presetAll:"Все 1–270", portionBy:(n)=>"по "+n, portionAll:"Все", pickOff:"не выбрано", portionPart:(i,n)=>"порция "+i+" из "+n, portionWhole:"весь список",
     rangeWarn:(max)=>`Укажите корректный диапазон: числа от 1 до ${max}, «от» ≤ «до».`,
     inDiap:(from,to)=>`в диапазоне ${from}–${to}`,
     resultAllScope:(n)=>`по всем ${n} глаголам`,
@@ -622,14 +669,14 @@ const I18N = {
     dictAllForms:"все формы для повторения", dictEmpty:"Ничего не найдено.",
     actLearned:"Выучено", actNotLearned:"Невыучено", actNew:"Новое", actRepeated:"Повторено",
     verbWord:(n)=>{ const f=["глагол","глагола","глаголов"]; const a=n%10,b=n%100; if(a===1&&b!==11)return f[0]; if(a>=2&&a<=4&&(b<10||b>=20))return f[1]; return f[2]; },
-    learnFilterTitle:"🗂️ Что повторяем?", learnStartBtn:"▶ Начать",
+    learnFilterTitle:"Что повторяем?", learnStartBtn:"▶ Начать",
     learnFinishBtn:"Завершить", learnCheckBtn:"Перейти к тренажёру",
     learnSetupFoot:"По умолчанию — все статусы. Нажмите на папку, чтобы включить/исключить её из повторения.",
     learnTapHint:"Тап по карточке — рассмотреть · вправо — «повторено» · влево — «невыучено»",
     learnCompleteTitle:"Повтор завершён", learnCompleteTestBtn:"🧪 Перейти к тренировке",
     langBtnTitle:"Язык интерфейса: русский — нажмите, чтобы сменить (RUS → ENG → ITA)",
     
-    stCardNo:(n)=>"Карта "+n, stTap:"Нажми, чтобы открыть", stDone:"✓ готово",
+    stCardNo:(n)=>"Карта "+n, stAllDone:"Мууулодец!", stTap:"Нажми, чтобы открыть", stDone:"✓ готово",
     stAriaHidden:(k)=>"Thema "+k+" — скрыто, нажми, чтобы открыть",
     stHintStart:"Нажми на <b>Thema A</b> — карта откроется и пойдёт время.",
     stSpeak:(k)=>"Говори: <b>Thema "+k+"</b>",
@@ -643,15 +690,15 @@ const I18N = {
     motto:"“Work hard, moo hard”", mottoAuthor:"— Immoonuel Cownt",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Trainer, Dictionary & Flashcards",
     navHome:"Trainer", navDict:"Dictionary", navLearn:"Cards", navSmalltalk:"Small Talk", stBack:"Back",
-    rangeTitle:"📍 Verb range",
+    rangeTitle:"Verb range",
     lblFrom:"from", lblTo:"to",
     lblLearned:"Learned", lblNotLearned:"Not learned", lblNew:"New", lblRepeated:"Repeated",
-    whatTrainTitle:"🎯 What to practice", whatTrainSub:"in the selected range",
+    whatTrainTitle:"What to practice", whatTrainSub:"in the selected range",
     chkShuffleLbl:"Shuffle", chkTransLbl:"Ask translation", chkPerfLbl:"Ask Perfekt",
     startBtn:"▶ Start test", dictShortcut:"📖 Open dictionary",
     exportBtn:"⬇ Export", importBtn:"⬆ Import", resetBtn:"↺ Reset",
     autosaveFoot:"Progress is auto-saved in this browser. “Export” downloads a progress file with the date and time in its name.",
-    dictTitle:"📖 Verb dictionary", dictSearchPh:"Search: infinitive, translation or number…",
+    dictTitle:"Verb dictionary", dictSearchPh:"Search: infinitive, translation or number…",
     filterAll:"All 270", filterRange:"In range",
     hideTransLbl:"Hide translation", hidePerfLbl:"Hide Perfekt",
     selfCheckFoot:"Self-check mode: turn on “hide” and click a cell to reveal the answer.",
@@ -661,9 +708,9 @@ const I18N = {
     overrideQ:"Accept this translation?", chipCorrect:"✓ Correct", chipWrong:"✗ Wrong",
     checkBtn:"Check", nextBtn:"Next →", quitBtn:"Finish", enterHint:"check / next",
     errCardTitle:"Mistake review",
-    retryWrongBtn:"↻ Retry this test's mistakes", againBtn:"🏠 Home",
+    retryWrongBtn:"↻ Retry this test's mistakes", againBtn:"Home",
     footerCredit:"Made by kiselkath",
-    presetAll:"All 1–270",
+    presetAll:"All 1–270", portionBy:(n)=>n+" each", portionAll:"All", pickOff:"not selected", portionPart:(i,n)=>"part "+i+" of "+n, portionWhole:"full list",
     rangeWarn:(max)=>`Please enter a valid range: numbers from 1 to ${max}, “from” ≤ “to”.`,
     inDiap:(from,to)=>`in range ${from}–${to}`,
     resultAllScope:(n)=>`across all ${n} verbs`,
@@ -695,14 +742,14 @@ const I18N = {
     dictAllForms:"all forms for review", dictEmpty:"Nothing found.",
     actLearned:"Learned", actNotLearned:"Not learned", actNew:"New", actRepeated:"Repeated",
     verbWord:(n)=> n===1 ? "verb" : "verbs",
-    learnFilterTitle:"🗂️ What to review?", learnStartBtn:"▶ Start",
+    learnFilterTitle:"What to review?", learnStartBtn:"▶ Start",
     learnFinishBtn:"Finish", learnCheckBtn:"Go to trainer",
     learnSetupFoot:"All statuses are selected by default. Tap a folder to include/exclude it from the review.",
     learnTapHint:"Tap the card to reveal more · right — “repeated” · left — “not learned”",
     learnCompleteTitle:"Repeat session finished", learnCompleteTestBtn:"🧪 Go to training",
     langBtnTitle:"Interface language: English — tap to switch (RUS → ENG → ITA)",
     
-    stCardNo:(n)=>"Card "+n, stTap:"Tap to reveal", stDone:"✓ done",
+    stCardNo:(n)=>"Card "+n, stAllDone:"Moooarvellous!", stTap:"Tap to reveal", stDone:"✓ done",
     stAriaHidden:(k)=>"Thema "+k+" — hidden, tap to reveal",
     stHintStart:"Tap <b>Thema A</b> — the card opens and the timer starts.",
     stSpeak:(k)=>"Speak: <b>Thema "+k+"</b>",
@@ -716,15 +763,15 @@ const I18N = {
     motto:"«Prima il dovere, poi le vaccanze»", mottoAuthor:"— Immanuel Vaccant",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Esercitatore, dizionario e schede",
     navHome:"Esercitatore", navDict:"Dizionario", navLearn:"Schede", navSmalltalk:"Small Talk", stBack:"Indietro",
-    rangeTitle:"📍 Intervallo di verbi",
+    rangeTitle:"Intervallo di verbi",
     lblFrom:"da", lblTo:"a",
     lblLearned:"Imparato", lblNotLearned:"Non imparato", lblNew:"Nuovo", lblRepeated:"Ripassato",
-    whatTrainTitle:"🎯 Cosa esercitare", whatTrainSub:"nell'intervallo selezionato",
+    whatTrainTitle:"Cosa esercitare", whatTrainSub:"nell'intervallo selezionato",
     chkShuffleLbl:"Mescola", chkTransLbl:"Chiedi la traduzione", chkPerfLbl:"Chiedi il Perfekt",
     startBtn:"▶ Inizia il test", dictShortcut:"📖 Apri il dizionario",
     exportBtn:"⬇ Esporta", importBtn:"⬆ Importa", resetBtn:"↺ Reimposta",
     autosaveFoot:"Il progresso viene salvato automaticamente in questo browser. «Esporta» scarica un file con data e ora nel nome.",
-    dictTitle:"📖 Dizionario dei verbi", dictSearchPh:"Cerca: infinito, traduzione o numero…",
+    dictTitle:"Dizionario dei verbi", dictSearchPh:"Cerca: infinito, traduzione o numero…",
     filterAll:"Tutti i 270", filterRange:"Nell'intervallo",
     hideTransLbl:"Nascondi traduzione", hidePerfLbl:"Nascondi Perfekt",
     selfCheckFoot:"Modalità autoverifica: attiva «nascondi» e clicca su una cella per rivelare la risposta.",
@@ -734,9 +781,9 @@ const I18N = {
     overrideQ:"Considerare corretta la traduzione?", chipCorrect:"✓ Corretto", chipWrong:"✗ Errore",
     checkBtn:"Verifica", nextBtn:"Avanti →", quitBtn:"Termina", enterHint:"verifica / avanti",
     errCardTitle:"Analisi degli errori",
-    retryWrongBtn:"↻ Ripeti gli errori di questo test", againBtn:"🏠 Home",
+    retryWrongBtn:"↻ Ripeti gli errori di questo test", againBtn:"Home",
     footerCredit:"Creato da kiselkath",
-    presetAll:"Tutti 1–270",
+    presetAll:"Tutti 1–270", portionBy:(n)=>"da "+n, portionAll:"Tutti", pickOff:"non selezionato", portionPart:(i,n)=>"parte "+i+" di "+n, portionWhole:"lista completa",
     rangeWarn:(max)=>`Inserisci un intervallo valido: numeri da 1 a ${max}, «da» ≤ «a».`,
     inDiap:(from,to)=>`nell'intervallo ${from}–${to}`,
     resultAllScope:(n)=>`su tutti i ${n} verbi`,
@@ -768,14 +815,14 @@ const I18N = {
     dictAllForms:"tutte le forme per il ripasso", dictEmpty:"Nessun risultato.",
     actLearned:"Imparato", actNotLearned:"Non imparato", actNew:"Nuovo", actRepeated:"Ripassato",
     verbWord:(n)=> n===1 ? "verbo" : "verbi",
-    learnFilterTitle:"🗂️ Cosa ripassiamo?", learnStartBtn:"▶ Inizia",
+    learnFilterTitle:"Cosa ripassiamo?", learnStartBtn:"▶ Inizia",
     learnFinishBtn:"Termina", learnCheckBtn:"Vai all'esercitatore",
     learnSetupFoot:"Di default sono selezionati tutti gli stati. Tocca una cartella per includerla/escluderla dal ripasso.",
     learnTapHint:"Tocca la carta per vedere di più · destra — «ripassato» · sinistra — «non imparato»",
     learnCompleteTitle:"Ripasso completato", learnCompleteTestBtn:"🧪 Vai all'allenamento",
     langBtnTitle:"Lingua dell'interfaccia: italiano — tocca per cambiare (RUS → ENG → ITA)",
     
-    stCardNo:(n)=>"Carta "+n, stTap:"Tocca per scoprire", stDone:"✓ fatto",
+    stCardNo:(n)=>"Carta "+n, stAllDone:"Muuuubravo!", stTap:"Tocca per scoprire", stDone:"✓ fatto",
     stAriaHidden:(k)=>"Thema "+k+" — nascosto, tocca per scoprire",
     stHintStart:"Tocca <b>Thema A</b> — la carta si apre e parte il timer.",
     stSpeak:(k)=>"Parla: <b>Thema "+k+"</b>",
@@ -808,7 +855,7 @@ function setLang(l){
   lang = l; try{ localStorage.setItem(LANG_KEY, l); }catch(e){}
   applyStaticI18n();
   renderPresets(); onRangeChange();
-  renderLearnPresets(); onLearnRangeChange();
+  onLearnRangeChange();
   if(lastSavedAt) updateSavedInfo(lastSavedAt);
   const dictVisible = !document.getElementById("dictScreen").classList.contains("hide");
   const quizVisible = !document.getElementById("quizScreen").classList.contains("hide");
@@ -847,26 +894,55 @@ function getRange(){ return {from:parseInt(document.getElementById("rFrom").valu
 function rangeValid(){ const {from,to}=getRange(); return Number.isInteger(from)&&Number.isInteger(to)&&from>=1&&to<=MAXID&&from<=to; }
 function inRange(v){ const {from,to}=getRange(); return v.id>=from && v.id<=to; }
 function rangeVerbs(){ return VERBS.filter(inRange); }
-const PRESETS=[[1,35],[36,70],[71,105],[106,140],[141,175],[176,210],[211,245],[246,270]];
-function renderPresets(){
-  const box=document.getElementById("presets"); box.innerHTML="";
-  PRESETS.forEach(([a,b])=>{ const btn=document.createElement("button"); btn.textContent=a+"–"+b; btn.dataset.a=a; btn.dataset.b=b;
-    btn.addEventListener("click",()=>{ document.getElementById("rFrom").value=a; document.getElementById("rTo").value=b; onRangeChange(); }); box.appendChild(btn); });
-  const all=document.createElement("button"); all.textContent=t("presetAll"); all.dataset.a=1; all.dataset.b=MAXID;
-  all.addEventListener("click",()=>{ document.getElementById("rFrom").value=1; document.getElementById("rTo").value=MAXID; onRangeChange(); }); box.appendChild(all);
+/* Порции: общий диапазон для тренажёра и карточек. Скрытые поля rFrom/rTo (и rFromL/rToL) остаются источником значений. */
+const PORTION_SIZES=[20,35,50];
+const portion={size:35, part:0, all:false};
+function portionRange(){ return portion.all ? {from:1,to:MAXID} : {from:portion.part*portion.size+1, to:Math.min(MAXID,(portion.part+1)*portion.size)}; }
+function portionFromRange(from,to){
+  if(!(Number.isInteger(from)&&Number.isInteger(to))){ from=1; to=MAXID; }
+  const size=PORTION_SIZES.find(z=>(from-1)%z===0 && to===Math.min(MAXID,from+z-1)) || 35;
+  portion.all = from<=1 && to>=MAXID; if(portion.all) return;
+  portion.size=size; portion.part=Math.min(Math.ceil(MAXID/size)-1, Math.max(0,Math.floor((from-1)/size)));
 }
-function markActivePreset(){ const {from,to}=getRange(); document.querySelectorAll("#presets button").forEach(b=>b.classList.toggle("sel", parseInt(b.dataset.a)===from && parseInt(b.dataset.b)===to)); }
+function renderPresets(){
+  const {from,to}=portionRange(), parts=Math.ceil(MAXID/portion.size);
+  document.querySelectorAll(".portion").forEach(box=>{
+    box.querySelectorAll(".pseg button").forEach(b=>{ const all=b.dataset.size==="all";
+      b.textContent = all ? t("portionAll") : t("portionBy")(b.dataset.size);
+      b.classList.toggle("sel", all ? portion.all : (!portion.all && Number(b.dataset.size)===portion.size)); });
+    box.querySelector(".prange").textContent = from+"–"+to;
+    box.querySelector(".ppart").textContent = portion.all ? t("portionWhole") : t("portionPart")(portion.part+1,parts);
+    box.querySelector(".pprev").disabled = portion.all || portion.part<=0;
+    box.querySelector(".pnext").disabled = portion.all || portion.part>=parts-1;
+  });
+}
+function applyPortion(){
+  const {from,to}=portionRange();
+  [["rFrom","rTo"],["rFromL","rToL"]].forEach(([a,b])=>{ document.getElementById(a).value=from; document.getElementById(b).value=to; });
+  renderPresets(); onRangeChange(); onLearnRangeChange();
+}
+document.querySelectorAll(".portion").forEach(box=>box.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b || b.disabled) return;
+  if(b.dataset.size==="all") portion.all=true;
+  else if(b.dataset.size){ const first=portion.part*portion.size+1; portion.size=Number(b.dataset.size); portion.all=false; portion.part=Math.floor((first-1)/portion.size); }
+  else if(b.classList.contains("pprev")) portion.part--;
+  else if(b.classList.contains("pnext")) portion.part++;
+  else return;
+  applyPortion();
+}));
 function onRangeChange(){
   const warn=document.getElementById("rWarn"), startBtn=document.getElementById("startBtn");
   if(!rangeValid()){ warn.classList.remove("hide"); warn.textContent=t("rangeWarn")(MAXID); startBtn.disabled=true; document.getElementById("rangeCount").textContent=""; }
   else{ warn.classList.add("hide"); startBtn.disabled=false; saveRange(); const n=rangeVerbs().length; document.getElementById("rangeCount").textContent="· "+n+" "+t("verbWord")(n); }
-  markActivePreset(); refreshFolders(); renderModes();
+  refreshFolders(); renderModes();
   if(dictFilter==="range") renderDict();
 }
 
 /* ---------- СЧЁТЧИКИ ---------- */
 function counts(){ let l=0,n=0,nw=0,r=0; rangeVerbs().forEach(v=>{ const s=status[v.id]; if(s==="learned")l++; else if(s==="notlearned")n++; else if(s==="repeated")r++; else nw++; }); return {learned:l,notlearned:n,repeated:r,"new":nw}; }
 function refreshFolders(){ const c=counts(); document.getElementById("cLearned").textContent=c.learned; document.getElementById("cNot").textContent=c.notlearned; document.getElementById("cRepeated").textContent=c.repeated; document.getElementById("cNew").textContent=c["new"];
+  { const total=c.learned+c.notlearned+c.repeated+c["new"];
+    document.querySelectorAll("#statBar i").forEach(seg=>{ const n=c[seg.className]||0; seg.style.display = n? "" : "none"; seg.style.width = total? (n/total*100)+"%" : "0"; }); }
   const {from,to}=getRange(); document.getElementById("foldersSub").textContent = rangeValid()? t("inDiap")(from,to) : ""; }
 
 /* ---------- ПРОВЕРКА ---------- */
@@ -1122,26 +1198,30 @@ function learnInRange(v){ const {from,to}=learnRange(); return v.id>=from && v.i
 function learnCounts(){ let l=0,n=0,nw=0,r=0; VERBS.filter(learnInRange).forEach(v=>{ const s=status[v.id]; if(s==="learned")l++; else if(s==="notlearned")n++; else if(s==="repeated")r++; else nw++; }); return {learned:l,notlearned:n,repeated:r,"new":nw}; }
 function refreshLearnFolders(){ const c=learnCounts();
   document.getElementById("cLearnedL").textContent=c.learned; document.getElementById("cNotL").textContent=c.notlearned;
-  document.getElementById("cRepeatedL").textContent=c.repeated; document.getElementById("cNewL").textContent=c["new"]; }
+  document.getElementById("cRepeatedL").textContent=c.repeated; document.getElementById("cNewL").textContent=c["new"];
+  /* превью: картинка первого глагола с этим статусом в выбранном диапазоне */
+  const inR=VERBS.filter(learnInRange);
+  document.querySelectorAll("#learnStatusFilter .folder").forEach(el=>{
+    let img=el.querySelector(".pick-img");
+    if(!img){ img=document.createElement("img"); img.className="pick-img"; img.alt=""; img.draggable=false; el.prepend(img); }
+    const v=inR.find(x=>status[x.id]===el.dataset.status), src=v?verbImgPath(v):"";
+    if(src){ if(img.dataset.id!==String(v.id)){ img.src=src; img.dataset.id=v.id; } } else { img.removeAttribute("src"); delete img.dataset.id; }
+    el.classList.toggle("has-img", !!src);
+    let off=el.querySelector(".pick-off");
+    if(!off){ off=document.createElement("span"); off.className="pick-off"; el.appendChild(off); }
+    off.textContent=t("pickOff");
+  }); }
 function learnStatusesChecked(){
   const st={}; document.querySelectorAll("#learnStatusFilter .folder").forEach(el=>{ st[el.dataset.status]=el.classList.contains("active"); });
   return st;
 }
 /* По умолчанию отмечены все статусы — набор дальше сокращается по ходу сессии (свайп вправо убирает карточку). */
 function buildLearnQueue(){ const st=learnStatusesChecked(); return VERBS.filter(learnInRange).filter(v=>st[status[v.id]]); }
-function renderLearnPresets(){
-  const box=document.getElementById("presetsL"); box.innerHTML="";
-  PRESETS.forEach(([a,b])=>{ const btn=document.createElement("button"); btn.textContent=a+"–"+b; btn.dataset.a=a; btn.dataset.b=b;
-    btn.addEventListener("click",()=>{ document.getElementById("rFromL").value=a; document.getElementById("rToL").value=b; onLearnRangeChange(); }); box.appendChild(btn); });
-  const all=document.createElement("button"); all.textContent=t("presetAll"); all.dataset.a=1; all.dataset.b=MAXID;
-  all.addEventListener("click",()=>{ document.getElementById("rFromL").value=1; document.getElementById("rToL").value=MAXID; onLearnRangeChange(); }); box.appendChild(all);
-}
-function markActivePresetL(){ const {from,to}=learnRange(); document.querySelectorAll("#presetsL button").forEach(b=>b.classList.toggle("sel", parseInt(b.dataset.a)===from && parseInt(b.dataset.b)===to)); }
 function onLearnRangeChange(){
   const warn=document.getElementById("rWarnL"), startBtn=document.getElementById("learnStartBtn");
   if(!learnRangeValid()){ warn.classList.remove("hide"); warn.textContent=t("rangeWarn")(MAXID); startBtn.disabled=true; document.getElementById("rangeCountL").textContent=""; }
-  else{ warn.classList.add("hide"); startBtn.disabled=false; const n=VERBS.filter(learnInRange).length; document.getElementById("rangeCountL").textContent="· "+n+" "+t("verbWord")(n); }
-  markActivePresetL(); refreshLearnFolders();
+  else{ warn.classList.add("hide"); startBtn.disabled=false; const n=VERBS.filter(learnInRange).length; const r=learnRange(); document.getElementById("rangeCountL").textContent="· "+r.from+"–"+r.to+" · "+n+" "+t("verbWord")(n); }
+  refreshLearnFolders();
 }
 let learnDeck=null, cardState=0, learnDrag=null;
 function learnGoToTest(){
@@ -1269,8 +1349,6 @@ function importProgress(file){ const rd=new FileReader();
 document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>{ const tb=b.dataset.tab;
   if(tb==="dict"){ renderDict(); show("dict"); } else if(tb==="learn"){ show("learnSetup"); } else if(tb==="smalltalk"){ openSmalltalk(); } else show(tb); }));
 document.getElementById("dictShortcut").addEventListener("click",()=>{ renderDict(); show("dict"); });
-document.getElementById("rFrom").addEventListener("input",onRangeChange);
-document.getElementById("rTo").addEventListener("input",onRangeChange);
 document.getElementById("startBtn").addEventListener("click",()=>startQuiz(selectedMode()||"all"));
 document.getElementById("checkBtn").addEventListener("click",doCheck);
 document.getElementById("nextBtn").addEventListener("click",nextQuestion);
@@ -1301,8 +1379,6 @@ document.querySelectorAll('#ovTrans .chip').forEach(b=>b.addEventListener("click
   const vTrans = vTransOf(curEval.v);
   document.getElementById("corrTrans").innerHTML=val?`<span class="ok">${t("acceptedYes")}</span> ${t("valueLbl")} <span class="sol">${vTrans}</span>`:`<span class="bad">${t("correctNo")}</span> ${t("correctLbl")} <span class="sol">${vTrans}</span>`; }));
 document.getElementById("langBtn").addEventListener("click",()=>{ const i=LANGS.indexOf(lang); setLang(LANGS[(i+1)%LANGS.length]); });
-document.getElementById("rFromL").addEventListener("input",onLearnRangeChange);
-document.getElementById("rToL").addEventListener("input",onLearnRangeChange);
 document.getElementById("learnStartBtn").addEventListener("click",startLearnDeck);
 document.querySelectorAll("#learnStatusFilter .folder").forEach(el=>{
   el.addEventListener("click",()=>el.classList.toggle("active"));
@@ -1405,6 +1481,7 @@ const ST_TOPICS = [
 ["Was denkst du? Was könnte eine gute Idee für eine aktive Pause sein?", "Как думаешь? Какая была бы хорошая идея для активной паузы?", "What do you think? What could be a good idea for an active break?", "Che ne pensi? Quale potrebbe essere una buona idea per una pausa attiva?"]
 ];
 const ST_DURATION = 120; // секунд на одну тему
+const ST_TOTAL = Math.floor(ST_TOPICS.length/2); // карт в одном проходе (по две темы на карту)
 const ST_TR_IDX = {ru:1, en:2, it:3};
 const st = {deck:[], cardNo:0, idx:{A:-1,B:-1}, active:null, endAt:0, tick:null,
   done:{A:false,B:false}, msg:"start", timeUp:false, showTr:false, audio:null};
@@ -1419,7 +1496,7 @@ function stDraw(exclude){
 }
 function stOther(k){ return k==="A"?"B":"A"; }
 function stRender(){
-  document.getElementById("stCardNo").textContent = st.cardNo ? t("stCardNo")(st.cardNo) : "";
+  document.getElementById("stCardNo").textContent = st.cardNo ? st.cardNo+"/"+ST_TOTAL : "";
   for(const k of ["A","B"]){
     const el=stTopicEl[k], i=st.idx[k]; if(i<0) continue;
     el.querySelector(".st-q").textContent = ST_TOPICS[i][0];
@@ -1449,7 +1526,16 @@ function stShowTime(sec){
   document.getElementById("stTimer").classList.toggle("last", sec<=10 && sec>0 && st.tick!==null);
 }
 function stStopTimer(){ if(st.tick){ clearInterval(st.tick); st.tick=null; document.title=t("pageTitle"); } }
+/* все карты пройдены: поздравление на весь экран → главная, счётчик и колода сбрасываются */
+function stAllDone(){
+  stStopTimer(); document.title=t("pageTitle"); st.cardNo=0; st.deck=[];
+  const o=document.getElementById("stDoneOverlay"); o.textContent=t("stAllDone"); o.classList.remove("hide");
+  let closed=false;
+  const close=()=>{ if(closed) return; closed=true; o.classList.add("hide"); show("home"); };
+  o.onclick=close; setTimeout(close,2600);
+}
 function stNewCard(){
+  if(st.cardNo>=ST_TOTAL){ stAllDone(); return; }
   stStopTimer(); st.active=null; st.done={A:false,B:false}; st.timeUp=false; st.msg="start"; st.cardNo++;
   st.idx.A = stDraw(-1); st.idx.B = stDraw(st.idx.A);
   for(const k of ["A","B"]) stTopicEl[k].classList.add("blurred"), stTopicEl[k].classList.remove("active");
@@ -1510,7 +1596,7 @@ document.getElementById("stTrBtn").addEventListener("click", ()=>{
 });
 
 /* ---------- INIT ---------- */
-applyStaticI18n(); loadProgress(); renderPresets(); onRangeChange(); renderLearnPresets(); onLearnRangeChange(); show("home");
+applyStaticI18n(); loadProgress(); { const r=getRange(); portionFromRange(r.from,r.to); } applyPortion(); show("home");
 </script>
 </body>
 </html>
