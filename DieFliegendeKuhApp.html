@@ -230,7 +230,9 @@
   @media (max-width:340px){ .nav{gap:4px} #nav button{font-size:12px; padding:10px 2px} }
   /* ---------- SMALL TALK (DTB B2) ---------- */
   body.st-mode{padding-bottom:130px}
-  .st-top{display:flex; justify-content:flex-end; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
+  .st-back{width:44px; height:44px; padding:0; display:inline-flex; align-items:center; justify-content:center}
+  .st-back svg{display:block}
+  .st-top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
   .st-cardno{font-size:17px; color:var(--muted); font-variant-numeric:tabular-nums}
   .st-eyebrow{font-size:16px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin:0; text-align:center}
   .st-timer{text-align:center; margin:6px 0 14px}
@@ -269,7 +271,7 @@
   .st-link{background:none; border:none; color:var(--muted); text-decoration:underline; text-underline-offset:3px; padding:6px; font-weight:400}
   .st-link:hover{color:var(--txt); transform:none}
   .st-controls{position:fixed; left:0; right:0; bottom:0; z-index:10; background:var(--panel); border-top:1px solid var(--line); padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
-  .st-controls > div{max-width:760px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1.25fr; gap:10px}
+  .st-controls > div{max-width:760px; margin:0 auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
   .st-controls button{padding:9px 6px; line-height:1.15; font-weight:400}
   .st-controls button small{display:block; font-size:14px; opacity:.75}
   .st-controls button:hover{transform:none}
@@ -489,6 +491,7 @@
   <!-- SMALL TALK (DTB B2) -->
   <div id="smalltalkScreen" class="hide">
     <div class="st-top">
+      <button class="ghost st-back" id="stBackBtn" type="button" data-i18n-aria="stBack" aria-label="Назад" title="Назад"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7"/></svg></button>
       <span class="st-cardno" id="stCardNo"></span>
     </div>
     <p class="st-eyebrow">DTB B2 · Small Talk · 2 Minuten</p>
@@ -556,7 +559,7 @@ const I18N = {
   ru:{
     motto:"«Делу время, потехе — му»", mottoAuthor:"— Иммуунуил Кант",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Тренажёр, словарь и карточки",
-    navHome:"Тренажёр", navDict:"Словарь", navLearn:"Карточки", navSmalltalk:"Small Talk",
+    navHome:"Тренажёр", navDict:"Словарь", navLearn:"Карточки", navSmalltalk:"Small Talk", stBack:"Назад",
     rangeTitle:"📍 Диапазон глаголов",
     lblFrom:"от", lblTo:"до",
     lblLearned:"Выучено", lblNotLearned:"Невыучено", lblNew:"Новые", lblRepeated:"Повторено",
@@ -629,7 +632,7 @@ const I18N = {
   en:{
     motto:"“Work hard, moo hard”", mottoAuthor:"— Immoonuel Cownt",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Trainer, Dictionary & Flashcards",
-    navHome:"Trainer", navDict:"Dictionary", navLearn:"Cards", navSmalltalk:"Small Talk",
+    navHome:"Trainer", navDict:"Dictionary", navLearn:"Cards", navSmalltalk:"Small Talk", stBack:"Back",
     rangeTitle:"📍 Verb range",
     lblFrom:"from", lblTo:"to",
     lblLearned:"Learned", lblNotLearned:"Not learned", lblNew:"New", lblRepeated:"Repeated",
@@ -702,7 +705,7 @@ const I18N = {
   it:{
     motto:"«Prima il dovere, poi le vaccanze»", mottoAuthor:"— Immanuel Vaccant",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Esercitatore, dizionario e schede",
-    navHome:"Esercitatore", navDict:"Dizionario", navLearn:"Schede", navSmalltalk:"Small Talk",
+    navHome:"Esercitatore", navDict:"Dizionario", navLearn:"Schede", navSmalltalk:"Small Talk", stBack:"Indietro",
     rangeTitle:"📍 Intervallo di verbi",
     lblFrom:"da", lblTo:"a",
     lblLearned:"Imparato", lblNotLearned:"Non imparato", lblNew:"Nuovo", lblRepeated:"Ripassato",
@@ -875,8 +878,10 @@ function vTransOf(v){ return v[TRANS_FIELD[lang]]; }
 /* ---------- НАВИГАЦИЯ / ЭКРАНЫ ---------- */
 const SCREENS={home:"startScreen",dict:"dictScreen",quiz:"quizScreen",result:"resultScreen",learnSetup:"learnSetupScreen",learnDeck:"learnDeckScreen",learnComplete:"learnCompleteScreen",smalltalk:"smalltalkScreen"};
 const NAV_OF={home:"home",dict:"dict",learnSetup:"learn",learnDeck:"learn",smalltalk:"smalltalk"};
-function show(name){ Object.values(SCREENS).forEach(id=>document.getElementById(id).classList.add("hide")); document.getElementById(SCREENS[name]).classList.remove("hide");
-  const navVisible = (name==="home"||name==="dict"||name==="learnSetup"||name==="smalltalk"); document.getElementById("nav").classList.toggle("hide", !navVisible);
+let lastTabScreen="home"; // куда возвращает стрелка «назад» из Small Talk
+function show(name){ if(name==="home"||name==="dict"||name==="learnSetup") lastTabScreen=name;
+  Object.values(SCREENS).forEach(id=>document.getElementById(id).classList.add("hide")); document.getElementById(SCREENS[name]).classList.remove("hide");
+  const navVisible = (name==="home"||name==="dict"||name==="learnSetup"); document.getElementById("nav").classList.toggle("hide", !navVisible);
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("sel", b.dataset.tab===(NAV_OF[name]||name)));
   if(name!=="smalltalk"){ stCancel(); document.title=t("pageTitle"); }
   document.body.classList.toggle("st-mode", name==="smalltalk");
@@ -1473,6 +1478,7 @@ function stBeep(){
   }); }catch(e){}
 }
 function openSmalltalk(){ if(!st.cardNo) stNewCard(); else stRender(); show("smalltalk"); }
+document.getElementById("stBackBtn").addEventListener("click", ()=>{ if(lastTabScreen==="dict") renderDict(); show(lastTabScreen); });
 stTopicEl.A.addEventListener("click", ()=>{ if(!(st.active==="A" && st.tick)) stStart("A"); });
 stTopicEl.B.addEventListener("click", ()=>{ if(!(st.active==="B" && st.tick)) stStart("B"); });
 document.getElementById("stCancelBtn").addEventListener("click", stCancel);
