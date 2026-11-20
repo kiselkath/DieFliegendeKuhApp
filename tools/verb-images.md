@@ -23,8 +23,17 @@ verb-images/270-zwingen.webp     # № 270
 - **WebP**, quality ~75–80%
 - Source size **~800×1200 px** (2x for retina card density)
 - Target weight **30–80 KB** per image (≈10–20 MB total for all 270)
-- Files stay outside the HTML (not base64) — the app loads them lazily,
-  one/two cards ahead at a time, as `<img src="verb-images/NNN-infinitiv.webp" loading="lazy">`
+- Images are **embedded into `DieFliegendeKuhApp.html`** (base64), so the single
+  HTML file works everywhere, including GitHub Pages and a plain download.
+  The `verb-images/` folder itself is local-only (in `.gitignore`).
+
+## Adding new images
+1. Put the WebP files into `verb-images/` (local folder, not committed).
+2. Run from the repo root: `python tools/embed-verb-images.py`
+3. Commit `DieFliegendeKuhApp.html`.
+
+The script rewrites the `VERB_IMAGES` block between the `VERB_IMAGES:BEGIN` /
+`VERB_IMAGES:END` markers from whatever is in `verb-images/` (key = the `NNN` number).
 
 ## Missing files are fine
 The blur effect (card states 1–2) is a CSS filter over the same image — no
