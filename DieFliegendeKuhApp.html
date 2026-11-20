@@ -136,8 +136,8 @@
   .dperf{font-weight:700}
   .dperf.ist{color:var(--accent2)} .dperf.hat{color:var(--txt)}
   .dtrans{}
-  .dhead{display:grid; grid-template-columns:1.15fr 1fr 1fr auto; gap:10px; padding:9px 12px; background:var(--panel2); border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); font-weight:700; position:sticky; top:0}
-  .dscroll{max-height:66vh; overflow:auto; border:1px solid var(--line); border-radius:12px}
+  .dhead{display:grid; grid-template-columns:1.15fr 1fr 1fr auto; gap:10px; padding:9px 12px; background:var(--panel2); border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); font-weight:700; position:sticky; top:var(--dbar-h,0px); z-index:4}
+  .dscroll{border:1px solid var(--line); border-radius:12px; overflow:clip}
   .dstatus{font-weight:700; font-size:12.5px; text-align:right; white-space:nowrap}
   .dstatus.learned{color:var(--ok)} .dstatus.notlearned{color:var(--err)}
   .dstatus.repeated{color:var(--rep)} .dstatus.new{color:var(--accent2)}
@@ -174,7 +174,8 @@
   .learncard-example{position:absolute; left:0; right:0; bottom:0; padding:22px 22px 26px; background:linear-gradient(transparent, rgba(0,0,0,.82) 55%); color:#fff; font-family:"VT323",ui-monospace,"Courier New",monospace; font-size:26px; letter-spacing:.3px; line-height:1.35; text-align:center; opacity:0; pointer-events:none; transition:opacity .2s; text-shadow:0 2px 4px rgba(0,0,0,.6)}
   .learncard-example.show2{opacity:1}
   /* CRT-оформление: шрифт, скругления, кегли (идёт после базовых правил, чтобы перекрывать их) */
-  body{font-family:"VT323","Handjet",ui-monospace,"Courier New",monospace; letter-spacing:.4px; -webkit-font-smoothing:none}
+  :root{--font-display:"VT323","Handjet",ui-monospace,"Courier New",monospace; --font-text:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  body{font-family:var(--font-display); letter-spacing:.4px; -webkit-font-smoothing:none}
   button{border-radius:6px}
   .field input, .rangebar input, .dsearch,
   .dtable, .dscroll, label.opt,
@@ -228,6 +229,33 @@
   @media (max-width:560px){ .nav{gap:6px} #nav button{font-size:14px; letter-spacing:.3px; padding:11px 3px} }
   @media (max-width:360px){ #nav button{font-size:13px; letter-spacing:0} }
   @media (max-width:340px){ .nav{gap:4px} #nav button{font-size:12px; padding:10px 2px} }
+  /* ---------- СЛОВАРЬ: читаемый текстовый шрифт; VT323 остаётся только на заголовке и кнопках ---------- */
+  #dictScreen .card{font-family:var(--font-text); font-size:16px; letter-spacing:normal; -webkit-font-smoothing:antialiased}
+  #dictScreen .cardtitle > span:first-child,
+  #dictScreen button{font-family:var(--font-display); letter-spacing:.4px; -webkit-font-smoothing:none}
+  #dictScreen .cardtitle{font-size:20px; flex-wrap:wrap}
+  #dictScreen .cardtitle .sub{font-size:13px}
+  #dictScreen .dsearch{font-size:16px; margin-bottom:8px}
+  #dictScreen .dtoggles label.opt{font-size:14px}
+  #dictScreen .foot, #dictScreen .dcount{font-size:13px}
+  #dictScreen .dhead{font-size:11.5px}
+  #dictScreen .dinf{font-size:16px; font-weight:700}
+  #dictScreen .dinf .num, #dictScreen .dinf .hint{font-size:13px}
+  #dictScreen .dforms{font-size:13px; margin-top:3px}
+  #dictScreen .dperf, #dictScreen .dtrans{font-size:15px; line-height:1.4}
+  #dictScreen .dperf{font-weight:600}
+  #dictScreen .dstatus{font-size:12.5px}
+  /* Словарь: список листается вместе со страницей; поиск и фильтры закреплены сверху */
+  .dbar{position:sticky; top:0; z-index:5; background:var(--panel); margin:0 -22px 8px; padding:10px 22px; border-bottom:1px solid var(--line)}
+  .dbar .filterchips{margin-bottom:0}
+  @media (max-width:560px){
+    .dbar .filterchips{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; margin:0 -22px; padding:0 22px}
+    .dbar .filterchips::-webkit-scrollbar{display:none}
+    .dbar .filterchips button{flex:0 0 auto; white-space:nowrap}
+  }
+  .dtop{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom)); z-index:6; width:48px; height:48px; padding:0; display:inline-flex; align-items:center; justify-content:center; background:var(--accent); color:var(--aink); border-color:transparent; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
+  .dtop.show{opacity:1; pointer-events:auto}
+  .dtop svg{display:block}
   /* ---------- SMALL TALK (DTB B2) ---------- */
   body.st-mode{padding-bottom:130px}
   .st-back{width:44px; height:44px; padding:0; display:inline-flex; align-items:center; justify-content:center}
@@ -258,7 +286,7 @@
   .st-label .nr{letter-spacing:0; text-transform:none; color:var(--muted)}
   .st-label .chk{margin-left:auto; color:var(--ok); letter-spacing:0; text-transform:none}
   /* Текст тем — читаемый системный шрифт вместо декоративного VT323 */
-  .st-q,.st-tr{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; letter-spacing:normal; -webkit-font-smoothing:antialiased; text-wrap:pretty}
+  .st-q,.st-tr{font-family:var(--font-text); letter-spacing:normal; -webkit-font-smoothing:antialiased; text-wrap:pretty}
   .st-q{display:block; font-size:clamp(18px,4.6vw,21px); font-weight:600; line-height:1.4; transition:filter .35s}
   .st-tr{display:block; font-size:15px; font-style:italic; line-height:1.45; color:var(--muted); margin-top:8px}
   .st-topic.blurred .st-q, .st-topic.blurred .st-tr{filter:blur(9px); user-select:none; -webkit-user-select:none}
@@ -343,6 +371,7 @@
   <div id="dictScreen" class="hide">
     <div class="card">
       <div class="cardtitle"><span data-i18n="dictTitle">📖 Словарь глаголов</span> <span class="sub" id="dictSub"></span></div>
+      <div class="dbar" id="dictBar">
       <input class="dsearch" id="dictSearch" data-i18n-placeholder="dictSearchPh" placeholder="Поиск: инфинитив, перевод или номер…">
       <div class="filterchips" id="dictFilters">
         <button data-f="all" class="sel" data-i18n="filterAll">Все 270</button>
@@ -351,6 +380,7 @@
         <button data-f="notlearned" data-i18n="lblNotLearned">Невыучено</button>
         <button data-f="repeated" data-i18n="lblRepeated">Повторено</button>
         <button data-f="new" data-i18n="lblNew">Новые</button>
+      </div>
       </div>
       <div class="dtoggles">
         <label class="opt"><input type="checkbox" id="hideTrans"> <span data-i18n="hideTransLbl">Скрыть перевод</span></label>
@@ -364,6 +394,7 @@
       </div>
       <div class="foot" id="dictEmpty"></div>
     </div>
+    <button type="button" class="dtop" id="dictTopBtn" aria-label="↑ Top"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M12 20V5M5 12l7-7 7 7"/></svg></button>
   </div>
 
   <!-- QUIZ -->
@@ -1273,6 +1304,15 @@ document.getElementById("importBtn").addEventListener("click",()=>document.getEl
 document.getElementById("fileInput").addEventListener("change",e=>{ if(e.target.files[0]) importProgress(e.target.files[0]); e.target.value=""; });
 document.getElementById("resetBtn").addEventListener("click",()=>{ if(confirm(t("confirmReset"))){ status=defaultStatus(); saveProgress(); refreshFolders(); renderModes(); renderDict(); } });
 document.getElementById("dictSearch").addEventListener("input",renderDict);
+/* словарь: высота закреплённой панели → отступ шапки таблицы; кнопка «наверх» */
+(function(){
+  const bar=document.getElementById("dictBar"), topBtn=document.getElementById("dictTopBtn");
+  const setH=()=>document.documentElement.style.setProperty("--dbar-h", bar.offsetHeight+"px");
+  if(window.ResizeObserver) new ResizeObserver(setH).observe(bar); else window.addEventListener("resize",setH);
+  setH();
+  window.addEventListener("scroll",()=>topBtn.classList.toggle("show", window.scrollY>600),{passive:true});
+  topBtn.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
+})();
 document.getElementById("hideTrans").addEventListener("change",renderDict);
 document.getElementById("hidePerf").addEventListener("change",renderDict);
 document.querySelectorAll('#dictFilters button').forEach(b=>b.addEventListener("click",()=>{ document.querySelectorAll('#dictFilters button').forEach(x=>x.classList.remove("sel")); b.classList.add("sel"); dictFilter=b.dataset.f; renderDict(); }));
