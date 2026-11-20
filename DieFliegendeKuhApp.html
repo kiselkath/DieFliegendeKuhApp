@@ -24,13 +24,15 @@
   html,body{margin:0;padding:0}
   body{background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; padding:20px; -webkit-font-smoothing:antialiased;}
   .wrap{max-width:760px; margin:0 auto;}
-  header.top{display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+  header.top{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;}
   h1{font-size:19px; margin:0; font-weight:700; letter-spacing:.2px}
   h1 small{display:block; font-weight:500; color:var(--muted); font-size:12.5px; margin-top:2px}
-  .toggles{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
-  .langtoggle{display:flex; gap:4px; flex:0 0 auto}
-  .langtoggle button{padding:6px 10px; font-size:12px; font-weight:700; border-radius:10px}
-  .langtoggle button.sel{background:var(--accent); color:var(--aink); border-color:transparent}
+  h1 small.motto{font-style:italic}
+  h1 small.motto .author{font-style:normal; white-space:nowrap}
+  h1 small.level{color:var(--accent); letter-spacing:1px}
+  .toggles{display:flex; align-items:center; gap:6px; flex:0 0 auto}
+  .toggles button{height:40px; min-width:44px; padding:0 12px; font-size:12px; font-weight:700; border-radius:10px; display:inline-flex; align-items:center; justify-content:center}
+  #langBtn{min-width:56px; background:var(--accent); color:var(--aink); border-color:transparent; letter-spacing:1px}
   .nav{display:flex; gap:8px; margin-bottom:16px}
   .nav button{flex:1; font:inherit; font-weight:700; cursor:pointer; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); transition:.15s}
   .nav button.sel{background:var(--accent); color:var(--aink); border-color:transparent}
@@ -192,7 +194,7 @@
   .scorebig{font-size:50px}
   table{font-size:17px}
   th{font-size:14px}
-  .langtoggle button,
+  .toggles button,
   .cardtitle .sub,
   .presets button,
   .rwarn,
@@ -232,6 +234,8 @@
   .st-entry .go{font-size:26px; color:var(--accent)}
   body.st-mode{padding-bottom:130px}
   .st-top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
+  .st-back{width:44px; height:44px; padding:0; display:inline-flex; align-items:center; justify-content:center}
+  .st-back svg{display:block}
   .st-cardno{font-size:17px; color:var(--muted); font-variant-numeric:tabular-nums}
   .st-eyebrow{font-size:16px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin:0; text-align:center}
   .st-timer{text-align:center; margin:6px 0 14px}
@@ -282,16 +286,11 @@
 
   <header class="top">
     <h1>DieFliegendeKuh
-      <small data-i18n="subtitle">Unregelmäßige Verben</small></h1>
+      <small class="motto"><span data-i18n="motto">«Делу время, потехе — му»</span> <span class="author" data-i18n="mottoAuthor">— Иммуунуил Кант</span></small>
+      <small class="level">Deutsch B2</small></h1>
     <div class="toggles">
-      <div class="langtoggle" id="schemeToggle">
-        <button type="button" id="schemeToggleBtn" title="Light/Dark">🌙</button>
-      </div>
-      <div class="langtoggle" id="langToggle">
-        <button type="button" data-lang="ru">RUS</button>
-        <button type="button" data-lang="en">ENG</button>
-        <button type="button" data-lang="it">ITA</button>
-      </div>
+      <button type="button" id="schemeToggleBtn" title="Light/Dark">🌙</button>
+      <button type="button" id="langBtn">RUS</button>
     </div>
   </header>
 
@@ -500,7 +499,7 @@
   <!-- SMALL TALK (DTB B2) -->
   <div id="smalltalkScreen" class="hide">
     <div class="st-top">
-      <button class="ghost" id="stBackBtn" type="button" data-i18n="againBtn">🏠 На главную</button>
+      <button class="ghost st-back" id="stBackBtn" type="button" data-i18n-aria="stBack" aria-label="Назад" title="Назад"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7"/></svg></button>
       <span class="st-cardno" id="stCardNo"></span>
     </div>
     <p class="st-eyebrow">DTB B2 · Small Talk · 2 Minuten</p>
@@ -566,8 +565,8 @@ try{ lang = localStorage.getItem(LANG_KEY) || "ru"; }catch(e){}
 if(!["ru","en","it"].includes(lang)) lang = "ru";
 const I18N = {
   ru:{
+    motto:"«Делу время, потехе — му»", mottoAuthor:"— Иммуунуил Кант",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Тренажёр, словарь и карточки",
-    subtitle:"Unregelmäßige Verben",
     navHome:"🎯 Тренажёр", navDict:"📖 Словарь", navLearn:"🗂️ Карточки",
     rangeTitle:"📍 Диапазон глаголов",
     lblFrom:"от", lblTo:"до",
@@ -626,7 +625,8 @@ const I18N = {
     learnSetupFoot:"По умолчанию — все статусы. Нажмите на папку, чтобы включить/исключить её из повторения.",
     learnTapHint:"Тап по карточке — рассмотреть · вправо — «повторено» · влево — «невыучено»",
     learnCompleteTitle:"Повтор завершён", learnCompleteTestBtn:"🧪 Перейти к тренировке",
-    stEntrySub:"DTB B2 · 77 тем, по 2 минуты на каждую",
+    langBtnTitle:"Язык интерфейса: русский — нажмите, чтобы сменить (RUS → ENG → ITA)",
+    stBack:"Назад", stEntrySub:"DTB B2 · 77 тем, по 2 минуты на каждую",
     stCardNo:(n)=>"Карта "+n, stTap:"Нажми, чтобы открыть", stDone:"✓ готово",
     stAriaHidden:(k)=>"Thema "+k+" — скрыто, нажми, чтобы открыть",
     stHintStart:"Нажми на <b>Thema A</b> — карта откроется и пойдёт время.",
@@ -638,8 +638,8 @@ const I18N = {
     stNext:"Новая карта", stNextSub:"другие темы", stNotif:"2 минуты прошли.",
   },
   en:{
+    motto:"“Work hard, moo hard”", mottoAuthor:"— Immoonuel Cownt",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Trainer, Dictionary & Flashcards",
-    subtitle:"Unregelmäßige Verben",
     navHome:"🎯 Trainer", navDict:"📖 Dictionary", navLearn:"🗂️ Cards",
     rangeTitle:"📍 Verb range",
     lblFrom:"from", lblTo:"to",
@@ -698,7 +698,8 @@ const I18N = {
     learnSetupFoot:"All statuses are selected by default. Tap a folder to include/exclude it from the review.",
     learnTapHint:"Tap the card to reveal more · right — “repeated” · left — “not learned”",
     learnCompleteTitle:"Repeat session finished", learnCompleteTestBtn:"🧪 Go to training",
-    stEntrySub:"DTB B2 · 77 topics, 2 minutes each",
+    langBtnTitle:"Interface language: English — tap to switch (RUS → ENG → ITA)",
+    stBack:"Back", stEntrySub:"DTB B2 · 77 topics, 2 minutes each",
     stCardNo:(n)=>"Card "+n, stTap:"Tap to reveal", stDone:"✓ done",
     stAriaHidden:(k)=>"Thema "+k+" — hidden, tap to reveal",
     stHintStart:"Tap <b>Thema A</b> — the card opens and the timer starts.",
@@ -710,8 +711,8 @@ const I18N = {
     stNext:"New card", stNextSub:"other topics", stNotif:"2 minutes are up.",
   },
   it:{
+    motto:"«Prima il dovere, poi le vaccanze»", mottoAuthor:"— Immanuel Vaccant",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Esercitatore, dizionario e schede",
-    subtitle:"Unregelmäßige Verben",
     navHome:"🎯 Esercitatore", navDict:"📖 Dizionario", navLearn:"🗂️ Schede",
     rangeTitle:"📍 Intervallo di verbi",
     lblFrom:"da", lblTo:"a",
@@ -770,7 +771,8 @@ const I18N = {
     learnSetupFoot:"Di default sono selezionati tutti gli stati. Tocca una cartella per includerla/escluderla dal ripasso.",
     learnTapHint:"Tocca la carta per vedere di più · destra — «ripassato» · sinistra — «non imparato»",
     learnCompleteTitle:"Ripasso completato", learnCompleteTestBtn:"🧪 Vai all'allenamento",
-    stEntrySub:"DTB B2 · 77 temi, 2 minuti ciascuno",
+    langBtnTitle:"Lingua dell'interfaccia: italiano — tocca per cambiare (RUS → ENG → ITA)",
+    stBack:"Indietro", stEntrySub:"DTB B2 · 77 temi, 2 minuti ciascuno",
     stCardNo:(n)=>"Carta "+n, stTap:"Tocca per scoprire", stDone:"✓ fatto",
     stAriaHidden:(k)=>"Thema "+k+" — nascosto, tocca per scoprire",
     stHintStart:"Tocca <b>Thema A</b> — la carta si apre e parte il timer.",
@@ -782,6 +784,8 @@ const I18N = {
     stNext:"Nuova carta", stNextSub:"altri temi", stNotif:"sono passati 2 minuti.",
   }
 };
+const LANGS = ["ru","en","it"];
+const LANG_LABEL = {ru:"RUS", en:"ENG", it:"ITA"};
 function t(key){ return I18N[lang][key]; }
 function applyStaticI18n(){
   document.documentElement.lang = lang;
@@ -792,7 +796,10 @@ function applyStaticI18n(){
     el.textContent = txt;
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{ el.placeholder = t(el.dataset.i18nPlaceholder); });
-  document.querySelectorAll("#langToggle button").forEach(b=>b.classList.toggle("sel", b.dataset.lang===lang));
+  document.querySelectorAll("[data-i18n-aria]").forEach(el=>{ el.ariaLabel = el.title = t(el.dataset.i18nAria); });
+  const lb=document.getElementById("langBtn");
+  lb.textContent = LANG_LABEL[lang];
+  lb.title = lb.ariaLabel = t("langBtnTitle");
 }
 let lastSavedAt = null;
 function setLang(l){
@@ -1281,7 +1288,7 @@ document.querySelectorAll('#ovTrans .chip').forEach(b=>b.addEventListener("click
   const it=document.getElementById("inTrans"); it.classList.remove("good","bad"); it.classList.add(val?"good":"bad");
   const vTrans = vTransOf(curEval.v);
   document.getElementById("corrTrans").innerHTML=val?`<span class="ok">${t("acceptedYes")}</span> ${t("valueLbl")} <span class="sol">${vTrans}</span>`:`<span class="bad">${t("correctNo")}</span> ${t("correctLbl")} <span class="sol">${vTrans}</span>`; }));
-document.querySelectorAll('#langToggle button').forEach(b=>b.addEventListener("click",()=>{ setLang(b.dataset.lang); }));
+document.getElementById("langBtn").addEventListener("click",()=>{ const i=LANGS.indexOf(lang); setLang(LANGS[(i+1)%LANGS.length]); });
 document.getElementById("rFromL").addEventListener("input",onLearnRangeChange);
 document.getElementById("rToL").addEventListener("input",onLearnRangeChange);
 document.getElementById("learnStartBtn").addEventListener("click",startLearnDeck);
