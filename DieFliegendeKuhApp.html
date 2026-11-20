@@ -29,13 +29,14 @@
   h1 small{display:block; font-weight:500; color:var(--muted); font-size:12.5px; margin-top:2px}
   h1 small.motto{font-style:italic}
   h1 small.motto .author{font-style:normal; white-space:nowrap}
-  h1 small.level{color:var(--accent); letter-spacing:1px}
   .toggles{display:flex; align-items:center; gap:6px; flex:0 0 auto}
   .toggles button{height:40px; min-width:44px; padding:0 12px; font-size:12px; font-weight:700; border-radius:10px; display:inline-flex; align-items:center; justify-content:center}
   #langBtn{min-width:56px; background:var(--accent); color:var(--aink); border-color:transparent; letter-spacing:1px}
   .nav{display:flex; gap:8px; margin-bottom:16px}
-  .nav button{flex:1; font:inherit; font-weight:700; cursor:pointer; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); transition:.15s}
+  .nav button{flex:1 1 0; min-width:0; font:inherit; font-weight:700; cursor:pointer; padding:12px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-radius:12px; border:1px solid var(--line); background:var(--panel2); color:var(--txt); transition:.15s}
   .nav button.sel{background:var(--accent); color:var(--aink); border-color:transparent}
+  .nav button.nav-st{border:2px dashed var(--accent)}
+  .nav button.nav-st.sel{border-style:solid; border-color:var(--accent)}
   .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:22px; margin-bottom:16px;}
   .muted{color:var(--muted)}
   .row{display:flex; gap:10px; flex-wrap:wrap}
@@ -224,18 +225,12 @@
   .learncard-example{font-size:29px}
   /* CRT: заголовки вкладок — капс, без эмодзи (эмодзи убирает JS, см. applyStaticI18n) */
   #nav button{text-transform:uppercase; letter-spacing:1px}
+  @media (max-width:560px){ .nav{gap:6px} #nav button{font-size:14px; letter-spacing:.3px; padding:11px 3px} }
+  @media (max-width:360px){ #nav button{font-size:13px; letter-spacing:0} }
+  @media (max-width:340px){ .nav{gap:4px} #nav button{font-size:12px; padding:10px 2px} }
   /* ---------- SMALL TALK (DTB B2) ---------- */
-  .st-entry{display:flex; align-items:center; gap:14px; width:100%; text-align:left; padding:16px 18px; margin-bottom:16px; border-radius:var(--radius); border:2px dashed var(--accent); background:var(--panel); font-weight:400}
-  .st-entry:hover{border-style:solid; border-color:var(--accent)}
-  .st-entry .ic{font-size:30px; line-height:1}
-  .st-entry .tx{flex:1; display:flex; flex-direction:column; gap:2px}
-  .st-entry b{font-size:24px; font-weight:400; letter-spacing:2px; text-transform:uppercase; color:var(--accent)}
-  .st-entry small{font-size:16px; color:var(--muted)}
-  .st-entry .go{font-size:26px; color:var(--accent)}
   body.st-mode{padding-bottom:130px}
-  .st-top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
-  .st-back{width:44px; height:44px; padding:0; display:inline-flex; align-items:center; justify-content:center}
-  .st-back svg{display:block}
+  .st-top{display:flex; justify-content:flex-end; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
   .st-cardno{font-size:17px; color:var(--muted); font-variant-numeric:tabular-nums}
   .st-eyebrow{font-size:16px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin:0; text-align:center}
   .st-timer{text-align:center; margin:6px 0 14px}
@@ -286,8 +281,7 @@
 
   <header class="top">
     <h1>DieFliegendeKuh
-      <small class="motto"><span data-i18n="motto">«Делу время, потехе — му»</span> <span class="author" data-i18n="mottoAuthor">— Иммуунуил Кант</span></small>
-      <small class="level">Deutsch B2</small></h1>
+      <small class="motto"><span data-i18n="motto">«Делу время, потехе — му»</span> <span class="author" data-i18n="mottoAuthor">— Иммуунуил Кант</span></small></h1>
     <div class="toggles">
       <button type="button" id="schemeToggleBtn" title="Light/Dark">🌙</button>
       <button type="button" id="langBtn">RUS</button>
@@ -295,18 +289,14 @@
   </header>
 
   <div class="nav" id="nav">
-    <button data-tab="home" class="sel" data-i18n="navHome">🎯 Тренажёр</button>
-    <button data-tab="dict" data-i18n="navDict">📖 Словарь</button>
-    <button data-tab="learn" data-i18n="navLearn">🗂️ Карточки</button>
+    <button data-tab="home" class="sel" data-i18n="navHome">Тренажёр</button>
+    <button data-tab="dict" data-i18n="navDict">Словарь</button>
+    <button data-tab="learn" data-i18n="navLearn">Карточки</button>
+    <button data-tab="smalltalk" class="nav-st" data-i18n="navSmalltalk">Small Talk</button>
   </div>
 
   <!-- HOME -->
   <div id="startScreen">
-    <button type="button" class="st-entry" id="smalltalkBtn">
-      <span class="ic">💬</span>
-      <span class="tx"><b>Small Talk</b><small data-i18n="stEntrySub">DTB B2 · 77 тем, по 2 минуты на каждую</small></span>
-      <span class="go">→</span>
-    </button>
     <div class="card">
       <div class="cardtitle"><span data-i18n="rangeTitle">📍 Диапазон глаголов</span> <span class="sub" id="rangeCount"></span></div>
       <div class="rangebar">
@@ -499,7 +489,6 @@
   <!-- SMALL TALK (DTB B2) -->
   <div id="smalltalkScreen" class="hide">
     <div class="st-top">
-      <button class="ghost st-back" id="stBackBtn" type="button" data-i18n-aria="stBack" aria-label="Назад" title="Назад"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7"/></svg></button>
       <span class="st-cardno" id="stCardNo"></span>
     </div>
     <p class="st-eyebrow">DTB B2 · Small Talk · 2 Minuten</p>
@@ -567,7 +556,7 @@ const I18N = {
   ru:{
     motto:"«Делу время, потехе — му»", mottoAuthor:"— Иммуунуил Кант",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Тренажёр, словарь и карточки",
-    navHome:"🎯 Тренажёр", navDict:"📖 Словарь", navLearn:"🗂️ Карточки",
+    navHome:"Тренажёр", navDict:"Словарь", navLearn:"Карточки", navSmalltalk:"Small Talk",
     rangeTitle:"📍 Диапазон глаголов",
     lblFrom:"от", lblTo:"до",
     lblLearned:"Выучено", lblNotLearned:"Невыучено", lblNew:"Новые", lblRepeated:"Повторено",
@@ -626,7 +615,7 @@ const I18N = {
     learnTapHint:"Тап по карточке — рассмотреть · вправо — «повторено» · влево — «невыучено»",
     learnCompleteTitle:"Повтор завершён", learnCompleteTestBtn:"🧪 Перейти к тренировке",
     langBtnTitle:"Язык интерфейса: русский — нажмите, чтобы сменить (RUS → ENG → ITA)",
-    stBack:"Назад", stEntrySub:"DTB B2 · 77 тем, по 2 минуты на каждую",
+    
     stCardNo:(n)=>"Карта "+n, stTap:"Нажми, чтобы открыть", stDone:"✓ готово",
     stAriaHidden:(k)=>"Thema "+k+" — скрыто, нажми, чтобы открыть",
     stHintStart:"Нажми на <b>Thema A</b> — карта откроется и пойдёт время.",
@@ -640,7 +629,7 @@ const I18N = {
   en:{
     motto:"“Work hard, moo hard”", mottoAuthor:"— Immoonuel Cownt",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Trainer, Dictionary & Flashcards",
-    navHome:"🎯 Trainer", navDict:"📖 Dictionary", navLearn:"🗂️ Cards",
+    navHome:"Trainer", navDict:"Dictionary", navLearn:"Cards", navSmalltalk:"Small Talk",
     rangeTitle:"📍 Verb range",
     lblFrom:"from", lblTo:"to",
     lblLearned:"Learned", lblNotLearned:"Not learned", lblNew:"New", lblRepeated:"Repeated",
@@ -699,7 +688,7 @@ const I18N = {
     learnTapHint:"Tap the card to reveal more · right — “repeated” · left — “not learned”",
     learnCompleteTitle:"Repeat session finished", learnCompleteTestBtn:"🧪 Go to training",
     langBtnTitle:"Interface language: English — tap to switch (RUS → ENG → ITA)",
-    stBack:"Back", stEntrySub:"DTB B2 · 77 topics, 2 minutes each",
+    
     stCardNo:(n)=>"Card "+n, stTap:"Tap to reveal", stDone:"✓ done",
     stAriaHidden:(k)=>"Thema "+k+" — hidden, tap to reveal",
     stHintStart:"Tap <b>Thema A</b> — the card opens and the timer starts.",
@@ -713,7 +702,7 @@ const I18N = {
   it:{
     motto:"«Prima il dovere, poi le vaccanze»", mottoAuthor:"— Immanuel Vaccant",
     pageTitle:"DieFliegendeKuh · Unregelmäßige Verben 1–270 · Esercitatore, dizionario e schede",
-    navHome:"🎯 Esercitatore", navDict:"📖 Dizionario", navLearn:"🗂️ Schede",
+    navHome:"Esercitatore", navDict:"Dizionario", navLearn:"Schede", navSmalltalk:"Small Talk",
     rangeTitle:"📍 Intervallo di verbi",
     lblFrom:"da", lblTo:"a",
     lblLearned:"Imparato", lblNotLearned:"Non imparato", lblNew:"Nuovo", lblRepeated:"Ripassato",
@@ -772,7 +761,7 @@ const I18N = {
     learnTapHint:"Tocca la carta per vedere di più · destra — «ripassato» · sinistra — «non imparato»",
     learnCompleteTitle:"Ripasso completato", learnCompleteTestBtn:"🧪 Vai all'allenamento",
     langBtnTitle:"Lingua dell'interfaccia: italiano — tocca per cambiare (RUS → ENG → ITA)",
-    stBack:"Indietro", stEntrySub:"DTB B2 · 77 temi, 2 minuti ciascuno",
+    
     stCardNo:(n)=>"Carta "+n, stTap:"Tocca per scoprire", stDone:"✓ fatto",
     stAriaHidden:(k)=>"Thema "+k+" — nascosto, tocca per scoprire",
     stHintStart:"Tocca <b>Thema A</b> — la carta si apre e parte il timer.",
@@ -792,7 +781,6 @@ function applyStaticI18n(){
   document.title = t("pageTitle");
   document.querySelectorAll("[data-i18n]").forEach(el=>{
     let txt = t(el.dataset.i18n);
-    if(el.closest("#nav")) txt = txt.replace(/^\S+\s+/,""); // CRT: вкладки без эмодзи
     el.textContent = txt;
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{ el.placeholder = t(el.dataset.i18nPlaceholder); });
@@ -886,9 +874,9 @@ function vTransOf(v){ return v[TRANS_FIELD[lang]]; }
 
 /* ---------- НАВИГАЦИЯ / ЭКРАНЫ ---------- */
 const SCREENS={home:"startScreen",dict:"dictScreen",quiz:"quizScreen",result:"resultScreen",learnSetup:"learnSetupScreen",learnDeck:"learnDeckScreen",learnComplete:"learnCompleteScreen",smalltalk:"smalltalkScreen"};
-const NAV_OF={home:"home",dict:"dict",learnSetup:"learn",learnDeck:"learn"};
+const NAV_OF={home:"home",dict:"dict",learnSetup:"learn",learnDeck:"learn",smalltalk:"smalltalk"};
 function show(name){ Object.values(SCREENS).forEach(id=>document.getElementById(id).classList.add("hide")); document.getElementById(SCREENS[name]).classList.remove("hide");
-  const navVisible = (name==="home"||name==="dict"||name==="learnSetup"); document.getElementById("nav").classList.toggle("hide", !navVisible);
+  const navVisible = (name==="home"||name==="dict"||name==="learnSetup"||name==="smalltalk"); document.getElementById("nav").classList.toggle("hide", !navVisible);
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("sel", b.dataset.tab===(NAV_OF[name]||name)));
   if(name!=="smalltalk"){ stCancel(); document.title=t("pageTitle"); }
   document.body.classList.toggle("st-mode", name==="smalltalk");
@@ -1264,7 +1252,7 @@ function importProgress(file){ const rd=new FileReader();
 
 /* ---------- СОБЫТИЯ ---------- */
 document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>{ const tb=b.dataset.tab;
-  if(tb==="dict"){ renderDict(); show("dict"); } else if(tb==="learn"){ show("learnSetup"); } else show(tb); }));
+  if(tb==="dict"){ renderDict(); show("dict"); } else if(tb==="learn"){ show("learnSetup"); } else if(tb==="smalltalk"){ openSmalltalk(); } else show(tb); }));
 document.getElementById("dictShortcut").addEventListener("click",()=>{ renderDict(); show("dict"); });
 document.getElementById("rFrom").addEventListener("input",onRangeChange);
 document.getElementById("rTo").addEventListener("input",onRangeChange);
@@ -1485,8 +1473,6 @@ function stBeep(){
   }); }catch(e){}
 }
 function openSmalltalk(){ if(!st.cardNo) stNewCard(); else stRender(); show("smalltalk"); }
-document.getElementById("smalltalkBtn").addEventListener("click", openSmalltalk);
-document.getElementById("stBackBtn").addEventListener("click", ()=>show("home"));
 stTopicEl.A.addEventListener("click", ()=>{ if(!(st.active==="A" && st.tick)) stStart("A"); });
 stTopicEl.B.addEventListener("click", ()=>{ if(!(st.active==="B" && st.tick)) stStart("B"); });
 document.getElementById("stCancelBtn").addEventListener("click", stCancel);
