@@ -175,7 +175,9 @@
   .learncard-example.show2{opacity:1}
   /* CRT-оформление: шрифт, скругления, кегли (идёт после базовых правил, чтобы перекрывать их) */
   :root{--font-display:"VT323","Handjet",ui-monospace,"Courier New",monospace; --font-text:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-  body{font-family:var(--font-display); letter-spacing:.4px; -webkit-font-smoothing:none}
+  /* Типографика: основной текст — системный шрифт (body); VT323 — только заголовки, кнопки, крупные цифры и флеш-карточка */
+  h1, button, .nav button, .cardtitle, #errCard > div:first-child, .folder .n, .scorebig, .learncard-wrap,
+  .st-eyebrow, .st-time, .st-banner, .st-label, .st-tap span, .st-cardno{font-family:var(--font-display); letter-spacing:.4px; -webkit-font-smoothing:none}
   button{border-radius:6px}
   .field input, .rangebar input, .dsearch,
   .dtable, .dscroll, label.opt,
@@ -184,41 +186,18 @@
   .mode-row.sel{background:rgba(131,199,72,.08)}
   [data-scheme="light"] .mode-row.sel{background:rgba(76,143,38,.08)}
   /* CRT: увеличенный кегль (моноширинный шрифт визуально мельче) */
-  body{font-size:20px}
+  button, .cardtitle, #errCard > div:first-child{font-size:20px}
   h1{font-size:23px}
   h1 small{font-size:15px}
-  .rangebar input[type=number]{font-size:20px}
-  .field input{font-size:19px}
-  .verb{font-size:34px}
-  .verb .hint{font-size:18px}
+  .cardtitle{flex-wrap:wrap}
+  .cardtitle .sub{font-family:var(--font-text); letter-spacing:normal; -webkit-font-smoothing:antialiased}
   .folder .n{font-size:30px}
-  .folder .l{font-size:15px}
   .scorebig{font-size:50px}
-  table{font-size:17px}
-  th{font-size:14px}
   .toggles button,
-  .cardtitle .sub,
   .presets button,
-  .rwarn,
-  .mode-row .d,
-  .qmeta,
-  .field label,
-  .correct,
-  .override .q,
   .chip,
-  .filterchips button,
-  .dcount,
-  .dinf .num,
-  .dinf .hint,
-  .dtoggles label.opt,
-  #errIntro{font-size:15px}
-  .badge,
-  .foot,
-  kbd,
-  .dhead,
-  .dforms,
-  .dstatus{font-size:15px}
-  td .muted[style*="font-size"]{font-size:14px!important}
+  .filterchips button{font-size:15px}
+  .foot{font-size:13px}
   .learncard-inf{font-size:30px}
   .learncard-trans{font-size:26px}
   .learncard-forms{font-size:17px}
@@ -272,7 +251,7 @@
   .st-bar i{display:block; height:100%; width:100%; background:var(--accent); transform-origin:left}
   .st-timer.last .st-bar i, .st-timer.done .st-bar i{background:var(--err)}
   .st-status{min-height:28px; margin:10px 0 0; color:var(--muted)}
-  .st-status b{color:var(--txt); font-weight:400}
+  .st-status b{color:var(--txt); font-weight:600}
   .st-banner{text-align:center; background:var(--errbg); color:var(--err); border:1px solid var(--err); border-radius:var(--radius); padding:10px 14px; font-size:26px; margin:0 0 14px; animation:stPulse .7s ease-in-out 4}
   .st-banner span{display:block; color:var(--txt); font-size:18px}
   @keyframes stPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
